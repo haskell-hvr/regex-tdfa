@@ -4,10 +4,10 @@ License:                BSD3
 License-File:           LICENSE
 Copyright:              Copyright (c) 2007, Christopher Kuklewicz
 Author:                 Christopher Kuklewicz
-Maintainer:             Artyom <yom@artyom.me>, Christopher Kuklewicz <TextRegexLazy@personal.mightyreason.com>
+Maintainer:             hvr@gnu.org
 Stability:              Seems to work, but not POSIX yet
-Homepage:               https://github.com/ChrisKuklewicz/regex-tdfa
-Bug-Reports:            https://github.com/ChrisKuklewicz/regex-tdfa/issues
+Homepage:               https://github.com/haskell-hvr/regex-tdfa
+Bug-Reports:            https://github.com/haskell-hvr/regex-tdfa/issues
 Synopsis:               Replaces/Enhances Text.Regex
 Description:            A new all Haskell "tagged" DFA regex engine, inspired by libtre
 Category:               Text
@@ -27,7 +27,7 @@ Cabal-Version:          >= 1.8
 
 source-repository head
   type:                git
-  location:            git://github.com/ChrisKuklewicz/regex-tdfa.git
+  location:            git://github.com/haskell-hvr/regex-tdfa.git
 
 flag devel
   description: enable flags that are useful for development
