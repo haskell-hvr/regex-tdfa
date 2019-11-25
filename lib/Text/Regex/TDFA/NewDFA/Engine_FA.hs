@@ -10,7 +10,7 @@ import Data.Array.Base(unsafeRead,unsafeWrite,STUArray(..))
 -- #ifdef __GLASGOW_HASKELL__
 import GHC.Arr(STArray(..))
 import GHC.ST(ST(..))
-import GHC.Prim(MutableByteArray#,RealWorld,Int#,sizeofMutableByteArray#,unsafeCoerce#)
+import GHC.Exts(MutableByteArray#,RealWorld,Int#,sizeofMutableByteArray#,unsafeCoerce#)
 {-
 -- #else
 import Control.Monad.ST(ST)
