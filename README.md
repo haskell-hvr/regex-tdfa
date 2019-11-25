@@ -1,6 +1,6 @@
 # regex-tdfa
 
-This is [regex-tdfa](http://hackage.haskell.org/package/regex-tdfa) which is a pure Haskell regular expression library (for POSIX extended regular expressions) originally written by Christopher Kuklewicz.
+This is [`regex-tdfa`](http://hackage.haskell.org/package/regex-tdfa) which is a pure Haskell regular expression library (for POSIX extended regular expressions) originally written by Christopher Kuklewicz.
 
 The name "tdfa" stands for Tagged-DFA.
 
@@ -8,18 +8,17 @@ The name "tdfa" stands for Tagged-DFA.
 
 ### Importing and using
 
-Add to your package.yaml/cabal file:
+[Declare a dependency](https://www.haskell.org/cabal/users-guide/developing-packages.html#pkg-field-build-depends) on the `regex-tdfa` library in your `.cabal` file:
 
-    dependencies:
-      - regex-tdfa
+```
+build-depends: regex-tdfa ^>= 1.3.1
+```
 
-In modules where you need to use regexes:
+In Haskell modules where you need to use regexes `import` the respective `regex-tdfa` module:
 
-    import Text.Regex.TDFA
-
-Note that regex-tdfa does not provide support for Text by default.
-If you need this functionality, add [regex-tdfa-text](https://hackage.haskell.org/package/regex-tdfa-text)
-as a dependency and `import Text.Regex.TDFA.Text ()`.
+```haskell
+import Text.Regex.TDFA
+```
 
 ### Basics
 
@@ -127,7 +126,7 @@ getAllMatches (a =~ b) :: [(Int, Int)]  -- (index, length)
 
 λ> getAllMatches ("john anne yifan" =~ "[a-z]+") :: [(Int, Int)]
 >>> [(0,4), (5,4), (10,5)]
-```
+``````
 
 #### Get submatch indices
 
@@ -143,7 +142,7 @@ getAllSubmatches (a =~ b) :: [(Int, Int)]  -- (index, length)
 
 ### Replacement
 
-regex-tdfa does not provide find-and-replace.
+`regex-tdfa` does not provide find-and-replace.
 
 ## The relevant links
 
@@ -151,7 +150,9 @@ This documentation is also available in [Text.Regex.TDFA haddock](http://hackage
 
 This was also documented at the [Haskell wiki](https://wiki.haskell.org/Regular_expressions#regex-tdfa).  The original Darcs repository was at [code.haskell.org](http://code.haskell.org/regex-tdfa/).  When not updated, this was forked and maintained by Roman Cheplyaka as [regex-tdfa-rc](http://hackage.haskell.org/package/regex-tdfa-rc).
 
-The new git repository is at [github](https://github.com/ChrisKuklewicz/regex-tdfa), which is primarily maintained by [Artyom (neongreen)](https://github.com/neongreen).
+Then the repository moved to <https://github.com/ChrisKuklewicz/regex-tdfa>, which was primarily maintained by [Artyom (neongreen)](https://github.com/neongreen).
+
+Finally, maintainership was passed on again and the repository moved to its current location at <https://github.com/hvr/regex-tdfa>.
 
 ## Avoiding backslashes
 
@@ -171,14 +172,14 @@ import Text.Regex.TDFA
 
 ## Known bugs and infelicities
 
-* Regexes with large character classes combined with `{m,n}` are very slow and memory-hungry ([#14][]).
+* Regexes with large character classes combined with `{m,n}` are very slow and memory-hungry ([#3][]).
 
   > An example of such a regex is `^[\x0020-\xD7FF]{1,255}$`.
 
-* POSIX submatch semantics are broken in some rare cases ([#12][]).
+* POSIX submatch semantics are broken in some rare cases ([#2][]).
 
-[#12]: https://github.com/ChrisKuklewicz/regex-tdfa/issues/12
-[#14]: https://github.com/ChrisKuklewicz/regex-tdfa/issues/14
+[#2]: https://github.com/hvr/regex-tdfa/issues/2
+[#3]: https://github.com/hvr/regex-tdfa/issues/3
 
 ## About this package
 
