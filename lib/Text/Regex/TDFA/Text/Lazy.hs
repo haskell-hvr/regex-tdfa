@@ -3,16 +3,14 @@ Module      :  Text.Regex.TDFA.Text.Lazy
 Copyright   :  Chris Kuklewicz 2007-2009, shelarcy 2012
 License     :  BSD-style (see the file LICENSE)
 
-Maintainer  :  shelarcy <shelarcy@gmail.com>
-Stability   :  experimental
-Portability :  GHC (uses text)
-
 This modules provides 'RegexMaker' and 'RegexLike' instances for using
 'Text' with the TDFA backend ("Text.Regex.TDFA.NewDFA.Engine" and
 "Text.Regex.TDFA.NewDFA.Tester").
 
 This exports instances of the high level API and the medium level
 API of 'compile','execute', and 'regexec'.
+
+@since 1.3.1
 -}
 module Text.Regex.TDFA.Text.Lazy(
   Regex
@@ -38,25 +36,31 @@ import Text.Regex.TDFA.NewDFA.Uncons(Uncons(uncons))
 import qualified Text.Regex.TDFA.NewDFA.Engine as Engine(execMatch)
 import qualified Text.Regex.TDFA.NewDFA.Tester as Tester(matchTest)
 
+-- | @since 1.3.1
 instance RegexContext Regex L.Text L.Text where
   match = polymatch
   matchM = polymatchM
 
+-- | @since 1.3.1
 instance Uncons L.Text where
   {- INLINE uncons #-}
   uncons = L.uncons
 
+-- | @since 1.3.1
 instance RegexMaker Regex CompOption ExecOption L.Text where
   makeRegexOptsM c e source = makeRegexOptsM c e (L.unpack source)
 
+-- | @since 1.3.1
 {-# SPECIALIZE execMatch :: Regex -> Position -> Char -> L.Text -> [MatchArray] #-}
 execMatch :: Uncons text => Regex -> Position -> Char -> text -> [MatchArray]
 execMatch = Engine.execMatch
 
+-- | @since 1.3.1
 {-# SPECIALIZE myMatchTest :: Regex -> L.Text -> Bool #-}
 myMatchTest :: Uncons text => Regex -> text -> Bool
 myMatchTest = Tester.matchTest
 
+-- | @since 1.3.1
 instance RegexLike Regex L.Text where
   matchOnce r s = listToMaybe (matchAll r s)
   matchAll r s = execMatch r 0 '\n' s
@@ -81,6 +85,7 @@ instance RegexLike Regex L.Text where
           in fmap trans x : seq t' (go (off0+len0) t' xs)
     in go 0 source (matchAll regex source)
 
+-- | @since 1.3.1
 compile :: CompOption -- ^ Flags (summed together)
         -> ExecOption -- ^ Flags (summed together)
         -> L.Text -- ^ The regular expression to compile
@@ -90,11 +95,13 @@ compile compOpt execOpt txt =
     Left err -> Left ("parseRegex for Text.Regex.TDFA.Text.Lazy failed:"++show err)
     Right pattern -> Right (patternToRegex pattern compOpt execOpt)
 
+-- | @since 1.3.1
 execute :: Regex      -- ^ Compiled regular expression
         -> L.Text -- ^ Text to match against
         -> Either String (Maybe MatchArray)
 execute r txt = Right (matchOnce r txt)
 
+-- | @since 1.3.1
 regexec :: Regex      -- ^ Compiled regular expression
         -> L.Text -- ^ Text to match against
         -> Either String (Maybe (L.Text, L.Text, L.Text, [L.Text]))
