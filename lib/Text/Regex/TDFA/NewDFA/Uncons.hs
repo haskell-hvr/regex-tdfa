@@ -3,6 +3,8 @@ module Text.Regex.TDFA.NewDFA.Uncons(Uncons(uncons)) where
 import qualified Data.ByteString.Char8 as SBS(ByteString,uncons)
 import qualified Data.ByteString.Lazy.Char8 as LBS(ByteString,uncons)
 import Data.Sequence(Seq,viewl,ViewL(EmptyL,(:<)))
+import qualified Data.Text as T
+import qualified Data.Text.Lazy as TL
 
 class Uncons a where
   {- INLINE uncons #-}
@@ -26,3 +28,13 @@ instance Uncons SBS.ByteString where
 instance Uncons LBS.ByteString where
   {- INLINE uncons #-}
   uncons = LBS.uncons
+
+-- | @since 1.3.1
+instance Uncons T.Text where
+  {- INLINE uncons #-}
+  uncons = T.uncons
+
+-- | @since 1.3.1
+instance Uncons TL.Text where
+  {- INLINE uncons #-}
+  uncons = TL.uncons

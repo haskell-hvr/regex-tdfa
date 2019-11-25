@@ -22,7 +22,7 @@ module Text.Regex.TDFA.Text.Lazy(
  ) where
 
 import Data.Array.IArray(Array,(!),elems)
-import qualified Data.Text.Lazy as L(Text,uncons,unpack)
+import qualified Data.Text.Lazy as L(Text,unpack)
 
 import Text.Regex.Base(MatchArray,RegexContext(..),Extract(..),RegexMaker(..),RegexLike(..))
 import Text.Regex.Base.Impl(polymatch,polymatchM)
@@ -32,7 +32,7 @@ import Text.Regex.TDFA.TDFA(patternToRegex)
 import Text.Regex.TDFA.Common(Regex(..),CompOption,ExecOption(captureGroups),Position)
 
 import Data.Maybe(listToMaybe)
-import Text.Regex.TDFA.NewDFA.Uncons(Uncons(uncons))
+import Text.Regex.TDFA.NewDFA.Uncons(Uncons)
 import qualified Text.Regex.TDFA.NewDFA.Engine as Engine(execMatch)
 import qualified Text.Regex.TDFA.NewDFA.Tester as Tester(matchTest)
 
@@ -40,11 +40,6 @@ import qualified Text.Regex.TDFA.NewDFA.Tester as Tester(matchTest)
 instance RegexContext Regex L.Text L.Text where
   match = polymatch
   matchM = polymatchM
-
--- | @since 1.3.1
-instance Uncons L.Text where
-  {- INLINE uncons #-}
-  uncons = L.uncons
 
 -- | @since 1.3.1
 instance RegexMaker Regex CompOption ExecOption L.Text where

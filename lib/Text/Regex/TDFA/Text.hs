@@ -22,7 +22,7 @@ module Text.Regex.TDFA.Text(
  ) where
 
 import Data.Array((!),elems)
-import qualified Data.Text as T(Text,uncons,unpack)
+import qualified Data.Text as T(Text,unpack)
 
 import Text.Regex.Base(RegexLike(..),RegexMaker(..),Extract(..),MatchArray,RegexContext(..))
 import Text.Regex.Base.Impl(polymatch,polymatchM)
@@ -32,14 +32,9 @@ import Text.Regex.TDFA.TDFA(patternToRegex)
 import Text.Regex.TDFA.Common(Regex(..),CompOption,ExecOption(captureGroups),Position)
 
 import Data.Maybe(listToMaybe)
-import Text.Regex.TDFA.NewDFA.Uncons(Uncons(uncons))
+import Text.Regex.TDFA.NewDFA.Uncons(Uncons)
 import qualified Text.Regex.TDFA.NewDFA.Engine as Engine(execMatch)
 import qualified Text.Regex.TDFA.NewDFA.Tester as Tester(matchTest)
-
--- | @since 1.3.1
-instance Uncons T.Text where
-  {- INLINE uncons #-}
-  uncons = T.uncons
 
 -- | @since 1.3.1
 instance RegexContext Regex T.Text T.Text where
