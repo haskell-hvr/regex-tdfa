@@ -6,7 +6,7 @@ module Text.Regex.TDFA.TDFA(patternToRegex,DFA(..),DT(..)
                             ,examineDFA,nfaToDFA,dfaMap) where
 
 --import Control.Arrow((***))
-import Data.Monoid(Monoid(..))
+import Data.Monoid as Mon(Monoid(..))
 import Control.Monad.State(State,MonadState(..),execState)
 import Data.Array.IArray(Array,(!),bounds,{-assocs-})
 import Data.IntMap(IntMap)
@@ -424,7 +424,7 @@ alterOrbit (tag,AlterModify {newInOrbit = inOrbit',freshOrbit = False}) =
   newOrbit pos = Orbits { inOrbit = inOrbit'
                         , basePos = pos
                         , ordinal = Nothing
-                        , getOrbits = mempty}
+                        , getOrbits = Mon.mempty}
   updateOrbit pos _tag new old | inOrbit old = old { inOrbit = inOrbit'
                                                    , getOrbits = getOrbits old |> pos }
                                | otherwise = new

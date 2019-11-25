@@ -47,7 +47,7 @@ import qualified Data.IntMap.EnumMap2 as EMap(null,keysSet,assocs)
 import Data.IntSet.EnumSet2(EnumSet)
 import qualified Data.IntSet.EnumSet2 as Set(singleton,toList,insert)
 import Data.Maybe(catMaybes,isNothing)
-import Data.Monoid(mempty,mappend)
+import Data.Monoid as Mon(Monoid(..))
 import qualified Data.Set as S(Set,insert,toAscList,empty)
 
 import Text.Regex.TDFA.Common(QT(..),QNFA(..),QTrans,TagTask(..),TagUpdate(..),DoPa(..)
@@ -771,7 +771,7 @@ qToNFA compOpt qTop = (q_id startingQNFA
       addNewline | multiline compOpt = S.insert '\n'
                  | otherwise = id
       dotTrans | multiline compOpt = Map.singleton '\n' mempty
-               | otherwise = mempty
+               | otherwise = Mon.mempty
 
 {-
 

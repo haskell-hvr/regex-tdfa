@@ -2,7 +2,7 @@
 
 module Data.IntMap.EnumMap2 where
 
-import Data.Foldable(Foldable(..))
+import Data.Foldable as F (Foldable(foldMap))
 import qualified Data.IntMap as M
 #if MIN_VERSION_containers(0,6,0)
 import qualified Data.IntMap.Internal.Debug as MD
@@ -27,8 +27,8 @@ instance Ord k => Monoid (EnumMap k a) where
 instance Ord k => Functor (EnumMap k) where
   fmap f (EnumMap m) = EnumMap (fmap f m)
 
-instance Ord k => Foldable (EnumMap k) where
-  foldMap f (EnumMap m) = foldMap f m
+instance Ord k => F.Foldable (EnumMap k) where
+  foldMap f (EnumMap m) = F.foldMap f m
 
 (!) :: (Enum key) => EnumMap key a -> key -> a
 (!) (EnumMap m) k = (M.!) m (fromEnum k)

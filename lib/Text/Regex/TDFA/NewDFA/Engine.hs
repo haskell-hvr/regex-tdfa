@@ -26,7 +26,7 @@ import qualified Data.IntMap.CharMap2 as CMap(findWithDefault)
 import Data.IntMap(IntMap)
 import qualified Data.IntMap as IMap(null,toList,lookup,insert)
 import Data.Maybe(catMaybes)
-import Data.Monoid(Monoid(..))
+import Data.Monoid as Mon(Monoid(..))
 import qualified Data.IntSet as ISet(toAscList)
 import Data.Array.IArray((!))
 import Data.List(partition,sort,foldl',sortBy,groupBy)
@@ -523,7 +523,7 @@ newScratch b_index b_tags = do
 newMScratch :: (Index,Index) -> S.ST s (MScratch s)
 newMScratch b_index = do
   pos's <- newArray b_index Nothing
-  orbit's <- newArray b_index mempty
+  orbit's <- newArray b_index Mon.mempty
   return (MScratch pos's orbit's)
 
 {- COMPOSE A FUNCTION CLOSURE TO COMPARE TAG VALUES -}
