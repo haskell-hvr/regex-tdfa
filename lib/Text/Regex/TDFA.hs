@@ -182,6 +182,8 @@ import Text.Regex.Base
 import Text.Regex.TDFA.String()
 import Text.Regex.TDFA.ByteString()
 import Text.Regex.TDFA.ByteString.Lazy()
+import Text.Regex.TDFA.Text()
+import Text.Regex.TDFA.Text.Lazy()
 import Text.Regex.TDFA.Sequence()
 import Text.Regex.TDFA.Common(Regex,CompOption(..),ExecOption(..))
 --import Text.Regex.TDFA.Wrap(Regex,CompOption(..),ExecOption(..),(=~),(=~~))
