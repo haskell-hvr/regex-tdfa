@@ -1,5 +1,5 @@
 Name:                   regex-tdfa
-Version:                1.3.0
+Version:                1.3.1.0
 License:                BSD3
 License-File:           LICENSE
 Copyright:              Copyright (c) 2007, Christopher Kuklewicz
@@ -44,6 +44,7 @@ library
                       , mtl                == 2.*
                       , parsec             == 3.*
                       , regex-base         >= 0.93.1 && < 0.95
+                      , text               >= 1.2.3 && < 1.3
 
   -- Support Semigroup instances uniformly
   --
@@ -80,9 +81,12 @@ library
                           Text.Regex.TDFA.String
                           Text.Regex.TDFA.TDFA
                           Text.Regex.TDFA.TNFA
+                          Text.Regex.TDFA.Text
+                          Text.Regex.TDFA.Text.Lazy
+
   Buildable:              True
   Extensions:             MultiParamTypeClasses, FunctionalDependencies, BangPatterns, MagicHash, RecursiveDo, NoMonoPatBinds, ForeignFunctionInterface, UnboxedTuples, TypeOperators, FlexibleContexts, ExistentialQuantification, UnliftedFFITypes, TypeSynonymInstances, FlexibleInstances
-  GHC-Options:            -Wall -funbox-strict-fields -fspec-constr-count=10 -O2 -fno-warn-orphans
+  GHC-Options:            -Wall -funbox-strict-fields -fspec-constr-count=10 -fno-warn-orphans
   if flag(devel)
     ghc-prof-options: -auto-all
 
@@ -92,7 +96,7 @@ test-suite regex-tdfa-unittest
   hs-source-dirs:       test
   main-is:              Main.hs
   extensions:           FlexibleInstances, FlexibleContexts,Rank2Types
-  GHC-Options:          -Wall -O2 -funbox-strict-fields
+  GHC-Options:          -Wall -funbox-strict-fields
   if flag(devel)
     ghc-prof-options: -auto-all
   if !impl(ghc >= 8.0)

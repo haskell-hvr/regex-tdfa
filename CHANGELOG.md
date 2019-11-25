@@ -1,3 +1,7 @@
+# 1.3.1.0
+
+- Merge <http://hackage.haskell.org/package/regex-tdfa-text> into `regex-tdfa` <https://github.com/haskell-hvr/regex-tdfa/issues/4>
+
 # 1.3.0
 
 Same as 1.2.3.3.
