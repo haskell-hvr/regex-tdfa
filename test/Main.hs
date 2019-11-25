@@ -1,28 +1,25 @@
-{-# LANGUAGE TemplateHaskell #-}
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
+{-# LANGUAGE MonoLocalBinds             #-}
 
 module Main where
 
-import Control.Monad
-import Control.Monad.Error()
-import Data.Array
-import Data.List
-import Control.Applicative
---import Data.Monoid
-import Data.Sequence(Seq)
-import Data.String
-import Data.Typeable
-import Data.Version()
-import System.Environment
-import Text.Regex.Base
-import qualified Data.Foldable as F
-import Data.FileEmbed
+import           Control.Applicative  as App
+import           Control.Monad
+import qualified Control.Monad.Fail   as Fail
+import           Data.Array
+import qualified Data.ByteString      as BS
 import qualified Data.ByteString.UTF8 as UTF8
-import qualified Control.Monad.Fail as Fail
-import System.Exit
+import           Data.List
+import           Data.String
+import           Data.Typeable
+import           Data.Version         ()
+import           System.Directory     (getDirectoryContents)
+import           System.Environment
+import           System.Exit
+import           System.FilePath      ((</>))
+import           Text.Regex.Base
 
-import qualified Text.Regex.TDFA.Common as TDFA
-import qualified Text.Regex.TDFA as TDFA
+import qualified Text.Regex.TDFA      as TDFA
 
 default(Int)
 
@@ -55,18 +52,18 @@ testOne' input =
 
 toTest :: String -> (Int,String,String,String)
 toTest line = let [n,regex,input,output] = words line
-                  noQ [] = []
+                  noQ []       = []
                   noQ ('?':xs) = '-':'1':noQ xs
-                  noQ (x:xs) = x:noQ xs
+                  noQ (x:xs)   = x:noQ xs
                   input' = if input == "NULL" then "" else unN input
               in (read n,regex,input',noQ output)
 
 toTest' :: String -> String -> (String,(Int,String,String,String))
 toTest' oldRegex line =
   let [n,regex,input,output] = words line
-      noQ [] = []
+      noQ []       = []
       noQ ('?':xs) = '-':'1':noQ xs
-      noQ (x:xs) = x:noQ xs
+      noQ (x:xs)   = x:noQ xs
       input' = if input == "NULL" then "" else input
       regex' = if regex == "SAME" then oldRegex else regex
   in (regex',(read n,regex',input',noQ output))
@@ -107,22 +104,26 @@ checkTest opM (n,regex,input,output) = do
                 p ("Actual result  : "++show output')
                 return (if n<0 then [] else [n])
 
-checkFile :: (RType -> RSource -> Result A) -> (String, String) -> IO (String,[Int])
+checkFile :: (RType -> RSource -> Result A) -> (FilePath, String) -> IO (FilePath,[Int])
 checkFile opM (filepath, contents) = do
   putStrLn $ "\nUsing Tests from: "++filepath
   vals <- liftM concat (mapM (checkTest opM) (load' contents))
   return (filepath,vals)
 
-checkTests :: (RType -> RSource -> Result A) -> IO [(String, [Int])]
-checkTests opM = mapM (checkFile opM) testCases
+checkTests :: (RType -> RSource -> Result A) -> [(FilePath,String)] -> IO [(String, [Int])]
+checkTests opM testCases = mapM (checkFile opM) testCases
 
-testCases :: [(String, String)]
-testCases =
-  map (\(filename, contents) -> (filename, UTF8.toString contents)) $
-  $(embedDir =<< makeRelativeToProject "test/cases")
+readTestCases :: FilePath -> IO [(String, String)]
+readTestCases folder = do
+  fns <- filter (isSuffixOf ".txt") <$> getDirectoryContents folder
+  when (null fns) $
+    fail ("readTestCases: No test-cases found in " ++ show folder)
+  forM (sort fns) $ \fn -> do
+    bs <- BS.readFile (folder </> fn)
+    return (fn, UTF8.toString bs)
 
 newtype Result a = Result (Either String a)
-  deriving (Eq, Show, Functor, Applicative, Monad)
+  deriving (Eq, Show, Functor, App.Applicative, Monad)
 
 instance Fail.MonadFail Result where
   fail = Result . Left
@@ -137,8 +138,8 @@ posix x reg =
 
 unN :: String -> String
 unN ('\\':'n':xs) = '\n':unN xs
-unN (x:xs) = x:unN xs
-unN [] = []
+unN (x:xs)        = x:unN xs
+unN []            = []
 
 manual :: [String] -> IO ()
 manual [sIn,rIn] = do
@@ -178,7 +179,7 @@ main = do
       putStrLn $ "With exactly two arguments:"
       putStrLn $ "    The first argument is the text to be searched."
       putStrLn $ "    The second argument is the regular expression pattern to search with."
-      vals <- checkTests posix
+      vals <- checkTests posix =<< readTestCases ("test" </> "cases")
       if null (concatMap snd vals)
         then putStrLn "\nWow, all the tests passed!"
         else do
