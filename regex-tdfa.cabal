@@ -115,6 +115,7 @@ library
                         TypeSynonymInstances
                         UnboxedTuples
                         UnliftedFFITypes
+  other-extensions:     CPP
 
   ghc-options:          -Wall -funbox-strict-fields -fspec-constr-count=10 -fno-warn-orphans
 
@@ -153,6 +154,8 @@ test-suite regex-tdfa-unittest
   default-extensions:   FlexibleInstances
                         FlexibleContexts
                         Rank2Types
+  other-extensions:     GeneralizedNewtypeDeriving
+                        TemplateHaskell
 
   ghc-options:          -Wall -funbox-strict-fields
 
