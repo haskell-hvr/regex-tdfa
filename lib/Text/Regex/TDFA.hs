@@ -1,4 +1,8 @@
 {-|
+Module: Text.Regex.TDFA
+Copyright: (c) Chris Kuklewicz 2007-2009
+SPDX-License-Identifier: BSD-3-Clause
+Maintainer: hvr@gnu.org
 
 The "Text.Regex.TDFA" module provides a backend for regular
 expressions. It provides instances for the classes defined and
@@ -7,25 +11,22 @@ you import this along with other backends then you should do so with
 qualified imports (with renaming for convenience).
 
 This regex-tdfa package implements, correctly, POSIX extended regular
-expressions.  It is highly unlikely that the regex-posix package on
+expressions.  It is highly unlikely that the @regex-posix@ package on
 your operating system is correct, see
 <http://www.haskell.org/haskellwiki/Regex_Posix> for examples of your
 OS's bugs.
 
 = Importing and using
 
-Add to your package.yaml/cabal file:
+<https://www.haskell.org/cabal/users-guide/developing-packages.html#pkg-field-build-depends Declare a dependency> on the @regex-tdfa@ library in your @.cabal@ file:
 
-> dependencies:
->   - regex-tdfa
+> build-depends: regex-tdfa ^>= 1.3.1.0
 
-In modules where you need to use regexes:
+In Haskell modules where you want to use regexes simply @import@ /this/ module:
 
-> import Text.Regex.TDFA
-
-Note that regex-tdfa does not provide support for @Text@ by default.
-If you need this functionality, add <https://hackage.haskell.org/package/regex-tdfa-text regex-tdfa-text>
-as a dependency and @import Text.Regex.TDFA.Text ()@.
+@
+import "Text.Regex.TDFA"
+@
 
 = Basics
 
@@ -115,7 +116,7 @@ a '=~' b :: (String, String, String, [String])
 This package does provide captured parenthesized subexpressions.
 
 Depending on the text being searched this package supports Unicode.
-The @[Char]@ and @(Seq Char)@ text types support Unicode.  The @ByteString@
+The @[Char]@, @Text@, @Text.Lazy@, and @(Seq Char)@ text types support Unicode.  The @ByteString@
 and @ByteString.Lazy@ text types only support ASCII.  It is possible to
 support utf8 encoded @ByteString.Lazy@ by using regex-tdfa and
 <http://hackage.haskell.org/package/regex-tdfa-utf8 regex-tdfa-utf8>

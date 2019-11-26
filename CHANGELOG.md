@@ -1,45 +1,50 @@
-# 1.3.1.0
+See also http://pvp.haskell.org/faq
 
-- Merge <http://hackage.haskell.org/package/regex-tdfa-text> into `regex-tdfa` <https://github.com/haskell-hvr/regex-tdfa/issues/4>
-- Introduce `force-O2` cabal flag to allow inhibiting the `ghc-options: -O2` included in the package description.
-  Note that you can control optimization levels on a per-package granularity via `cabal.project` files; see [cabal's user-guide](https://cabal.readthedocs.io/en/latest/nix-local-build.html#configuring-builds-with-cabal-project) for more details.
-- Don't inject `ghc-options: -O2` by default anymore (see #7 for rationale)
+## 1.3.1.0
+
+- Merge <http://hackage.haskell.org/package/regex-tdfa-text> into `regex-tdfa`; see <https://github.com/haskell-hvr/regex-tdfa/issues/4>.
+- Don't inject `ghc-options: -O2` by default anymore (see #7 for rationale) and introduce `force-O2` cabal flag to control the injection of `ghc-options: -O2`.
+  Note that you can conveniently control optimization levels on a per-package granularity via `cabal.project` files; see [cabal's user-guide](https://cabal.readthedocs.io/en/latest/nix-local-build.html#configuring-builds-with-cabal-project) for more details.
 
 # 1.3.0
 
-Same as 1.2.3.3.
+- Same as 1.2.3.3 release; see <https://github.com/ChrisKuklewicz/regex-tdfa/issues/29>.
+- Compatibility with GHC 8.8 and regex-base-0.9.4 (h/t @asr).
+- Turned `regex-tdfa-unittest` into a `regex-tdfa` testsuite.
 
-See <https://github.com/ChrisKuklewicz/regex-tdfa/issues/29>.
+----
 
-# 1.2.3.3 (deprecated)
+### 1.2.3.3 (deprecated)
 
 * Compatibility with GHC 8.8 and regex-base-0.9.4 (h/t @asr).
 * Turned `regex-tdfa-unittest` into a `regex-tdfa` testsuite.
 
-# 1.2.3.2
+### 1.2.3.2
 
 * Significantly improved documentation (h/t William Yao).
 
-# 1.2.3.1
+### 1.2.3.1
 
 * Compatibility with `containers-0.6`.
 
-# 1.2.3
+## 1.2.3
 
 * Added `Semigroup` instances for some types (h/t Herbert Valerio Riedel).
 
-# 1.2.2
+## 1.2.2
 
 * New maintainer.
 * Now we don't reexport the problematic `Show` instance for functions.
 
-# 1.2.1
+## 1.2.1
 
 * Updated dependency versions.
 
 # 1.2.0
 
 "Almost ghc-7.8" with the array 0.4 changes for `Data.Array.Unsafe`
+
+----
 
 # 1.1.8
 
