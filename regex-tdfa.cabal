@@ -35,19 +35,13 @@ source-repository head
   type:                git
   location:            https://github.com/hvr/regex-tdfa.git
 
-flag devel
+flag force-O2
   default: False
   manual: True
   description:
-    Enable flags that are useful for development
-
-flag force-O2
-  default: True
-  manual: True
-  description:
-    Force compiling with @ghc-options: -O2@. This is currently active by default because this was wired-in for past releases.
+    Force compiling with @ghc-options: -O2@.
     .
-    __NOTE__: You can control optimization levels on a per-package granularity via @cabal.project@ files; see <https://cabal.readthedocs.io/en/latest/nix-local-build.html#configuring-builds-with-cabal-project cabal's user-guide> for more details.
+    __NOTE__: This flag is mostly provided for legacy use-cases. Nowadays you can conveniently control optimization levels on a per-package granularity via @cabal.project@ files; see <https://cabal.readthedocs.io/en/latest/nix-local-build.html#configuring-builds-with-cabal-project cabal's user-guide> for more details.
 
 library
   hs-source-dirs:       lib
@@ -121,8 +115,6 @@ library
 
   if flag(force-O2)
     ghc-options:        -O2
-  if flag(devel)
-    ghc-prof-options:   -auto-all
 
 
 test-suite regex-tdfa-unittest
@@ -162,5 +154,3 @@ test-suite regex-tdfa-unittest
 
   if flag(force-O2)
     ghc-options:        -O2
-  if flag(devel)
-    ghc-prof-options:   -auto-all

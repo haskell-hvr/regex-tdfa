@@ -3,6 +3,7 @@
 - Merge <http://hackage.haskell.org/package/regex-tdfa-text> into `regex-tdfa` <https://github.com/haskell-hvr/regex-tdfa/issues/4>
 - Introduce `force-O2` cabal flag to allow inhibiting the `ghc-options: -O2` included in the package description.
   Note that you can control optimization levels on a per-package granularity via `cabal.project` files; see [cabal's user-guide](https://cabal.readthedocs.io/en/latest/nix-local-build.html#configuring-builds-with-cabal-project) for more details.
+- Don't inject `ghc-options: -O2` by default anymore (see #7 for rationale)
 
 # 1.3.0
 
