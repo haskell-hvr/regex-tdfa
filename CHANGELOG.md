@@ -1,5 +1,9 @@
 See also http://pvp.haskell.org/faq
 
+## 1.3.1.0 Revision 2
+
+- Compatibility with `base-4.15` (GHC 9.0) and `bytestring-0.11`
+
 ## 1.3.1.0
 
 - Merge <http://hackage.haskell.org/package/regex-tdfa-text> into `regex-tdfa`; see <https://github.com/haskell-hvr/regex-tdfa/issues/4>.
