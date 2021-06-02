@@ -2,7 +2,8 @@
 Module: Text.Regex.TDFA
 Copyright: (c) Chris Kuklewicz 2007-2009
 SPDX-License-Identifier: BSD-3-Clause
-Maintainer: hvr@gnu.org
+Maintainer: hvr@gnu.org, Andreas Abel
+Stability: stable
 
 The "Text.Regex.TDFA" module provides a backend for regular
 expressions. It provides instances for the classes defined and
@@ -18,7 +19,7 @@ OS's bugs.
 
 = Importing and using
 
-<https://www.haskell.org/cabal/users-guide/developing-packages.html#pkg-field-build-depends Declare a dependency> on the @regex-tdfa@ library in your @.cabal@ file:
+Declare a dependency on the @regex-tdfa@ library in your @.cabal@ file:
 
 > build-depends: regex-tdfa ^>= 1.3.1.1
 
@@ -117,10 +118,7 @@ This package does provide captured parenthesized subexpressions.
 
 Depending on the text being searched this package supports Unicode.
 The @[Char]@, @Text@, @Text.Lazy@, and @(Seq Char)@ text types support Unicode.  The @ByteString@
-and @ByteString.Lazy@ text types only support ASCII.  It is possible to
-support utf8 encoded @ByteString.Lazy@ by using regex-tdfa and
-<http://hackage.haskell.org/package/regex-tdfa-utf8 regex-tdfa-utf8>
-packages together (required the utf8-string package).
+and @ByteString.Lazy@ text types only support ASCII.
 
 As of version 1.1.1 the following GNU extensions are recognized, all
 anchors:
