@@ -20,7 +20,7 @@ OS's bugs.
 
 <https://www.haskell.org/cabal/users-guide/developing-packages.html#pkg-field-build-depends Declare a dependency> on the @regex-tdfa@ library in your @.cabal@ file:
 
-> build-depends: regex-tdfa ^>= 1.3.1.0
+> build-depends: regex-tdfa ^>= 1.3.1.1
 
 In Haskell modules where you want to use regexes simply @import@ /this/ module:
 

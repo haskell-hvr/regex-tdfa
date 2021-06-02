@@ -1,6 +1,10 @@
 See also http://pvp.haskell.org/faq
 
-## 1.3.1.0 Revision 2
+## 1.3.1.1 (2021-06-02)
+
+- Removed extension NoMonoPatBinds from `.cabal`-file for GHC 9.2 compatibility.
+
+## 1.3.1.0 Revision 2 (2021-02-20)
 
 - Compatibility with `base-4.15` (GHC 9.0) and `bytestring-0.11`
 
