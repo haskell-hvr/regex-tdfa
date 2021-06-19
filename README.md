@@ -94,7 +94,7 @@ a =~ b :: (String, String, String, [String])
 >>> ("", "div[attr=1234]", "", ["attr","1234"])
 ```
 
-#### Get *all* matches
+#### Get *all* non-overlapping matches
 
 ```haskell
 -- can also return Data.Array instead of List
