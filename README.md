@@ -94,7 +94,7 @@ a =~ b :: (String, String, String, [String])
 >>> ("", "div[attr=1234]", "", ["attr","1234"])
 ```
 
-#### Get *all* non-overlapping matches
+#### Get all non-overlapping matches
 
 ```haskell
 -- can also return Data.Array instead of List
@@ -102,7 +102,11 @@ getAllTextMatches (a =~ b) :: [String]
 
 λ> getAllTextMatches ("john anne yifan" =~ "[a-z]+") :: [String]
 >>> ["john","anne","yifan"]
+
+λ> getAllTextMatches ("0a0b0" =~ "0[a-z]0") :: [String]
+>>> ["0a0"]
 ```
+Note that `"0b0"` is not included in the result since it overlaps with `"0a0"`.
 
 #### Special characters
 
