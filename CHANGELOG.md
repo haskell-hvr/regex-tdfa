@@ -1,5 +1,10 @@
 For the package version policy (PVP), see  http://pvp.haskell.org/faq .
 
+### 1.3.1.1 Revision 1
+
+_2021-08-12, Andreas Abel_
+- Compatibility with `base-4.16` (GHC 9.2)
+
 ### 1.3.1.1
 
 _2021-06-03, Andreas Abel_
