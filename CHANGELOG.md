@@ -1,5 +1,10 @@
 For the package version policy (PVP), see  http://pvp.haskell.org/faq .
 
+### 1.3.1.1 Revision 2
+
+_2021-12-26, Andreas Abel_
+- Allow `text-2.0`
+
 ### 1.3.1.1 Revision 1
 
 _2021-08-12, Andreas Abel_
