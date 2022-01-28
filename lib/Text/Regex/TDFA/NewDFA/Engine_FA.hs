@@ -1,7 +1,7 @@
 -- | This is the code for the main engine.  This captures the posix
 -- subexpressions.  There is also a non-capturing engine, and a
 -- testing engine.
--- 
+--
 -- It is polymorphic over the internal Uncons type class, and
 -- specialized to produce the needed variants.
 module Text.Regex.TDFA.NewDFA.Engine_FA(execMatch) where
@@ -60,7 +60,7 @@ set = unsafeWrite
 
 noSource :: ((Index, Instructions),STUArray s Tag Position,OrbitLog)
 noSource = ((-1,err "noSource"),err "noSource",err "noSource")
- 
+
 {-# SPECIALIZE execMatch :: Regex -> Position -> Char -> ([] Char) -> [MatchArray] #-}
 {-# SPECIALIZE execMatch :: Regex -> Position -> Char -> (Seq Char) -> [MatchArray] #-}
 {-# SPECIALIZE execMatch :: Regex -> Position -> Char -> SBS.ByteString -> [MatchArray] #-}
@@ -81,7 +81,7 @@ execMatch (Regex { regex_dfa =  DFA {d_id=didIn,d_dt=dtIn}
   orbitTags :: [Tag]
   !orbitTags = map fst . filter ((Orbit==).snd) . assocs $ aTags
 
-  !test = mkTest newline         
+  !test = mkTest newline
 
   comp :: C s
   comp = {-# SCC "matchHere.comp" #-} ditzyComp'3 aTags
@@ -184,7 +184,7 @@ execMatch (Regex { regex_dfa =  DFA {d_id=didIn,d_dt=dtIn}
                                     _ -> return Nothing )
                 let compressGroup [((state,_),orbit)] | Seq.null (getOrbits orbit) = return ()
                                                       | otherwise =
-                      set (m_orbit s1) state 
+                      set (m_orbit s1) state
                       . (IMap.insert tag $! (orbit { ordinal = Nothing, getOrbits = mempty}))
                       =<< m_orbit s1 !! state
 
@@ -357,7 +357,7 @@ showMS s i = do
 showWS :: WScratch s -> ST s String
 showWS (WScratch pos) = do
   a <- getAssocs pos
-  return $ unlines [ "WScratch" 
+  return $ unlines [ "WScratch"
                    , indent (show a)]
 -}
 {- CREATING INITIAL MUTABLE SCRATCH DATA STRUCTURES -}
@@ -419,7 +419,7 @@ ditzyComp'3 aTagOP = comp0 where
 
   allcomps :: Tag -> [F s]
   allcomps tag | tag > top = [F (\ _ _ _ _ _ _ -> return EQ)]
-               | otherwise = 
+               | otherwise =
     case aTagOP ! tag of
       Orbit -> F (challenge_Orb tag) : allcomps (succ tag)
       Maximize -> F (challenge_Max tag) : allcomps (succ tag)
@@ -468,7 +468,7 @@ ditzyComp'3 aTagOP = comp0 where
               else return (compare p1 p2)
   challenge_Max _ [] _ _ _ _ _ = err "impossible 9384324"
 
-  challenge_Orb !tag (F next:comps) preTag x1@(_state1,_pos1,orbit1') np1 x2@(_state2,_pos2,orbit2') np2 = 
+  challenge_Orb !tag (F next:comps) preTag x1@(_state1,_pos1,orbit1') np1 x2@(_state2,_pos2,orbit2') np2 =
     let s1 = IMap.lookup tag orbit1'
         s2 = IMap.lookup tag orbit2'
     in case (s1,s2) of
@@ -489,7 +489,7 @@ comparePos :: (ViewL Position) -> (ViewL Position) -> Ordering
 comparePos EmptyL EmptyL = EQ
 comparePos EmptyL _      = GT
 comparePos _      EmptyL = LT
-comparePos (p1 :< ps1) (p2 :< ps2) = 
+comparePos (p1 :< ps1) (p2 :< ps2) =
   compare p1 p2 `mappend` comparePos (viewl ps1) (viewl ps2)
 
 {- CONVERT WINNERS TO MATCHARRAY -}

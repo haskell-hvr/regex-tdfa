@@ -52,7 +52,7 @@ execMatch (Regex { regex_dfa = (DFA {d_id=didIn,d_dt=dtIn})
                  , regex_compOptions = CompOption { multiline = newline } } )
           offsetIn prevIn inputIn = L.runST runCaptureGroup where
 
-  !test = mkTest newline         
+  !test = mkTest newline
 
   runCaptureGroup = {-# SCC "runCaptureGroup" #-} do
     obtainNext <- L.strictToLazyST constructNewEngine
@@ -199,7 +199,7 @@ putMQ ws@(WScratch {ws_start=start}) (MQ {mq_earliest=earliest,mq_list=list}) = 
     then writeSTRef earliest start >> writeSTRef list [ws]
     else do
       old <- readSTRef list
-      let !rest = dropWhile (\ w -> start <= ws_start w) old 
+      let !rest = dropWhile (\ w -> start <= ws_start w) old
           !new = ws : rest
       writeSTRef list new
 

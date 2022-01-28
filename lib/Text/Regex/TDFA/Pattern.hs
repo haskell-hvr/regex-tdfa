@@ -1,6 +1,6 @@
 -- | This "Text.Regex.TDFA.Pattern" module provides the 'Pattern' data
 -- type and its subtypes.  This 'Pattern' type is used to represent
--- the parsed form of a Regular Expression.  
+-- the parsed form of a Regular Expression.
 module Text.Regex.TDFA.Pattern
     (Pattern(..)
     ,PatternSet(..)
@@ -88,7 +88,7 @@ showPattern pIn =
                             else x:'-':(toEnum (pred n+fromEnum x)):[]
 -}
         paren s = ('(':s)++")"
-       
+
 data PatternSet = PatternSet (Maybe (Set Char))
                              (Maybe (Set PatternSetCharacterClass))
                              (Maybe (Set PatternSetCollatingElement))
@@ -128,7 +128,7 @@ instance Show PatternSetCollatingElement where
 instance Show PatternSetEquivalenceClass where
   showsPrec _ p = showChar '[' . showChar '=' . shows (unSEC p) . showChar '=' . showChar ']'
 
--- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == 
+-- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- ==
 
 -- | Do the transformation and simplification in a single traversal.
 -- This removes the PPlus, PQuest, and PBound values, changing to POr
@@ -200,7 +200,7 @@ starTrans' pIn =
    simplicity, only use ! when p can match 0 characters but not only 0
    characters.
 
-   Call this (PNonEmpty p) in the Pattern type. 
+   Call this (PNonEmpty p) in the Pattern type.
    p! is PNonEmpty p is POr [PEmpty,p]
    IS THIS TRUE?  Use QuickCheck?
 
@@ -225,8 +225,8 @@ starTrans' pIn =
    if p can match 0 or non-zero characters then cases are
    p{0,0} is (), p{0,1} is (p)?, p{0,2} is (pp!)?, p{0,3} is (pp!p!)?
    p{1,1} is p, p{1,2} is pp!, p{1,3} is pp!p!, p{1,4} is pp!p!p!
-   p{2,2} is p'p, 
-   p{2,3} is p'pp!, 
+   p{2,2} is p'p,
+   p{2,3} is p'pp!,
    p{2,4} is p'pp!p! or p'p(pp!)!
    p{2,5} is p'pp!p!p! or p'p(p(pp!)!)!
    p{3,3} is p'p'p, p{3,4} is p'p'pp!, p{3,5} is p'p'pp!p!, p{3,6} is p'p'pp!p!p!
@@ -236,7 +236,7 @@ starTrans' pIn =
    p{0,1} is p?, p{0,2} is (pp?)?, p{0,3} is (p(pp?)?)?, p{0,4} is (pp{0,3})?
    p{1,1} is p, p{1,j} is pp{0,pred j}
    p{2,2} is p'p, p{2,3} is p'pp?, p{2,4} is p'p(pp?)?, p{2,5} = p'p{1,4} = p'(pp{0,3})
-   p{3,3} is p'p'p, p{3,4} is p'p'pp?, p{3,5} is p'p'p(pp?)?, p{3,6} is 
+   p{3,3} is p'p'p, p{3,4} is p'p'pp?, p{3,5} is p'p'p(pp?)?, p{3,6} is
 
    And by this logic, the PStar False is really p*!  So p{0,} is p*
    and p{1,} is pp*! and p{2,} is p'pp*! and p{3,} is p'p'pp*!
@@ -323,7 +323,7 @@ starTrans' pIn =
 -- redundant form.  Nested 'POr' and 'PConcat' are flattened. PEmpty
 -- is propagated.
 simplify' :: Pattern -> Pattern
-simplify' x@(POr _) = 
+simplify' x@(POr _) =
   let ps' = case span notPEmpty (flatten x) of
               (notEmpty,[]) -> notEmpty
               (notEmpty,_:rest) -> notEmpty ++ (PEmpty:filter notPEmpty rest) -- keep 1st PEmpty only

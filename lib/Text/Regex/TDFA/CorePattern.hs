@@ -249,7 +249,7 @@ cannotAccept q = maybe False (0==) $ snd . takes $ q
 -- from the dfs of the children and simultaneously down in the form of
 -- pre and post HandleTag data.  This bidirectional flow is handled
 -- declaratively by using the MonadFix (i.e. mdo).
--- 
+--
 -- Invariant: A tag should exist in Q in exactly one place (and will
 -- be in a preTag,postTag, or getOrbit field).  This is partly because
 -- PGroup needs to know the tags are around precisely the expression
@@ -264,10 +264,10 @@ cannotAccept q = maybe False (0==) $ snd . takes $ q
 --
 -- There is a final "qwin of Q {postTag=ISet.singleton 1}" and an
 -- implied initial index tag of 0.
--- 
+--
 -- favoring pushing Apply into the child postTag makes PGroup happier
 
-type PM = RWS (Maybe GroupIndex) [Either Tag GroupInfo] ([OP]->[OP],Tag) 
+type PM = RWS (Maybe GroupIndex) [Either Tag GroupInfo] ([OP]->[OP],Tag)
 type HHQ = HandleTag  -- m1 : info about left boundaary / preTag
         -> HandleTag  -- m2 : info about right boundary / postTag
         -> PM Q
@@ -298,7 +298,7 @@ partitionEither = helper id id where
 --       and lazily looks resetGroupTags from aGroups, the result of all writer (Right _)
 --       preReset stores the resetGroupTags result of the lookup in the tree
 --     makeOrbit sends some tags to the writer (Left _)
---     withOrbit listens to children send orbit info to writer for resetOrbitTags 
+--     withOrbit listens to children send orbit info to writer for resetOrbitTags
 --   nullQ depends m1 m2 and resetOrbitTags and resetGroupTags and is sent up the tree
 patternToQ :: CompOption -> (Pattern,(GroupIndex,DoPa)) -> (Q,Array Tag OP,Array GroupIndex [GroupInfo])
 patternToQ compOpt (pOrig,(maxGroupIndex,_)) = (tnfa,aTags,aGroups) where
@@ -374,7 +374,7 @@ patternToQ compOpt (pOrig,(maxGroupIndex,_)) = (tnfa,aTags,aGroups) where
   -- withParent uses MonadReader(local) to set getParentIndex to return (Just this)
   -- withParent uses MonadWriter(listens to makeGroup/Right) to return contained group indices (stopTag)
   -- withParent is only safe if getParentIndex has been checked to be not equal to Nothing (see PGroup below)
-  -- Note use of laziness: the immediate children's group index is used to look up all copies of the 
+  -- Note use of laziness: the immediate children's group index is used to look up all copies of the
   -- group in aGroups, including copies that are not immediate children.
   withParent :: GroupIndex -> PM a -> PM (a,[Tag])
   withParent this = local (const (Just this)) . listens childGroupInfo
@@ -630,5 +630,5 @@ addTagsToNullView tags oldNV= do
 
 
 -- xxx todo
--- 
+--
 -- see of PNonEmpty -> NonEmpty -> TNFA is really smarter than POr about tags

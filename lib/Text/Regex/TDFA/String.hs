@@ -1,4 +1,4 @@
-{- | 
+{- |
 This modules provides 'RegexMaker' and 'RegexLike' instances for using
 'String' with the TDFA backend.
 

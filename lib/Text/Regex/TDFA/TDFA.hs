@@ -138,7 +138,7 @@ nfaToDFA ((startIndex,aQNFA),aTagOp,aGroupInfo) co eo = Regex dfa startIndex ind
                    -> [(IMap.Key, Transition)]
               fuse [] y = fmap (fmap (mergeDTrans o1)) y
               fuse x [] = fmap (fmap (mergeDTrans o2)) x
-              fuse x@((xc,xa):xs) y@((yc,ya):ys) = 
+              fuse x@((xc,xa):xs) y@((yc,ya):ys) =
                 case compare xc yc of
                   LT -> (xc,mergeDTrans o2 xa) : fuse xs y
                   EQ -> (xc,mergeDTrans xa ya) : fuse xs ys
@@ -211,7 +211,7 @@ showDFA m (DFA {d_id=i,d_dt=dt}) = "DFA {d_id = "++show (ISet.toList i)
 -- is free to mutatate the old state.  If the QTrans has only one
 -- entry then all we need to do is mutate that entry when making a
 -- transition.
--- 
+--
 pickQTrans :: Array Tag OP -> QTrans -> [({-Destination-}Index,(DoPa,Instructions))]
 pickQTrans op tr = mapSnd (bestTrans op) . IMap.toList $ tr
 
@@ -246,7 +246,7 @@ bestTrans aTagOP (f:fs) | null fs = canonical f
 
   mergeTagOrbit xx [] = xx
   mergeTagOrbit [] yy = yy
-  mergeTagOrbit xx@(x:xs) yy@(y:ys) = 
+  mergeTagOrbit xx@(x:xs) yy@(y:ys) =
     case compare (fst x) (fst y) of
       GT -> y : mergeTagOrbit xx ys
       LT -> x : mergeTagOrbit xs yy
@@ -293,7 +293,7 @@ bestTrans aTagOP (f:fs) | null fs = canonical f
     cw xx [] = foldr (\x rest -> comp (Just x) Nothing  `mappend` rest) mempty xx
     cw [] yy = foldr (\y rest -> comp Nothing  (Just y) `mappend` rest) mempty yy
 
-                   
+
 isDFAFrontAnchored :: DFA -> Bool
 isDFAFrontAnchored = isDTFrontAnchored . d_dt
  where

@@ -68,7 +68,7 @@ flipOrder EQ = EQ
 noWin :: WinTags -> Bool
 noWin = null
 
--- | Used to track elements of the pattern that accept characters or 
+-- | Used to track elements of the pattern that accept characters or
 -- are anchors
 newtype DoPa = DoPa {dopaIndex :: Int} deriving (Eq,Ord)
 
@@ -116,7 +116,7 @@ type Position = Int
 -- | GroupIndex is for indexing submatches from capturing
 -- parenthesized groups (PGroup\/Group)
 type GroupIndex = Int
--- | GroupInfo collects the parent and tag information for an instance 
+-- | GroupInfo collects the parent and tag information for an instance
 -- of a group
 data GroupInfo = GroupInfo {
     thisIndex, parentIndex :: GroupIndex
@@ -290,7 +290,7 @@ showQT (Simple win trans other) = "{qt_win=" ++ show win
   where foo :: CharMap QTrans -> [(Char,[(Index,[TagCommand])])]
         foo = mapSnd foo' . Map.toAscList
         foo' :: QTrans -> [(Index,[TagCommand])]
-        foo' = IMap.toList 
+        foo' = IMap.toList
 showQT (Testing test dopas a b) = "{Testing "++show test++" "++show (Set.toList dopas)
                               ++"\n"++indent' a
                               ++"\n"++indent' b++"}"

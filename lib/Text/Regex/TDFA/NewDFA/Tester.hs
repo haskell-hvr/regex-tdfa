@@ -1,5 +1,5 @@
 -- | Like Engine, but merely checks to see whether any match at all is found.
--- 
+--
 module Text.Regex.TDFA.NewDFA.Tester(matchTest) where
 
 import qualified Data.IntMap.CharMap2 as CMap(findWithDefault)

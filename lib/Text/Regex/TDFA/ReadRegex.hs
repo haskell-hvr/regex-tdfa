@@ -56,14 +56,14 @@ p_group = lookAhead (char '(') >> do
 p_post_atom atom = (char '?' >> return (PQuest atom))
                <|> (char '+' >> return (PPlus atom))
                <|> (char '*' >> return (PStar True atom))
-               <|> p_bound atom 
+               <|> p_bound atom
                <|> return atom
 
 p_bound atom = try $ between (char '{') (char '}') (p_bound_spec atom)
 
 p_bound_spec atom = do lowS <- many1 digit
                        let lowI = read lowS
-                       highMI <- option (Just lowI) $ try $ do 
+                       highMI <- option (Just lowI) $ try $ do
                                    _ <- char ','
   -- parsec note: if 'many digits' fails below then the 'try' ensures
   -- that the ',' will not match the closing '}' in p_bound, same goes
@@ -78,9 +78,9 @@ p_bound_spec atom = do lowS <- many1 digit
 -- An anchor cannot be modified by a repetition specifier
 p_anchor = (char '^' >> liftM PCarat char_index)
        <|> (char '$' >> liftM PDollar char_index)
-       <|> try (do _ <- string "()" 
+       <|> try (do _ <- string "()"
                    index <- group_index
-                   return $ PGroup index PEmpty) 
+                   return $ PGroup index PEmpty)
        <?> "empty () or anchor ^ or $"
 
 char_index = do (gi,ci) <- getState
@@ -92,7 +92,7 @@ p_char = p_dot <|> p_left_brace <|> p_escaped <|> p_other_char where
   p_dot = char '.' >> char_index >>= return . PDot
   p_left_brace = try $ (char '{' >> notFollowedBy digit >> char_index >>= return . (`PChar` '{'))
   p_escaped = char '\\' >> anyChar >>= \c -> char_index >>= return . (`PEscape` c)
-  p_other_char = noneOf specials >>= \c -> char_index >>= return . (`PChar` c) 
+  p_other_char = noneOf specials >>= \c -> char_index >>= return . (`PChar` c)
     where specials  = "^.[$()|*+?{\\"
 
 -- parse [bar] and [^bar] sets of characters
@@ -127,7 +127,7 @@ p_set_elem_equiv = liftM BEEquiv $
 p_set_elem_coll =  liftM BEColl $
   try (between (string "[.") (string ".]") (many1 $ noneOf ".]"))
 
-p_set_elem_range = try $ do 
+p_set_elem_range = try $ do
   start <- noneOf "]-"
   _  <- char '-'
   end <- noneOf "]"
@@ -136,7 +136,7 @@ p_set_elem_range = try $ do
     then return (BEChars [start..end])
     else unexpected "End point of dashed character range is less than starting point"
 
-p_set_elem_char = do 
+p_set_elem_char = do
   c <- noneOf "]"
   when (c == '-') $ do
     atEnd <- (lookAhead (char ']') >> return True) <|> (return False)
