@@ -285,7 +285,8 @@ execMatch r@(Regex { regex_dfa = DFA {d_id=didIn,d_dt=dtIn}
                     challenge x1@((_si1,ins1),_p1,_o1) x2@((_si2,ins2),_p2,_o2) = {-# SCC "goNext.findTrans.challenge" #-} do
                       check <- comp offset x1 (newPos ins1) x2 (newPos ins2)
                       if check==LT then return x2 else return x1
-                (first:rest) <- mapM prep (IMap.toList sources)
+                first_rest <- mapM prep (IMap.toList sources)
+                let first:rest = first_rest
                 set which destIndex =<< foldM challenge first rest
           let dl = IMap.toList dtrans
           mapM_ findTransTo dl
