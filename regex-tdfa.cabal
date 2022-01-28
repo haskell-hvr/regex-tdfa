@@ -118,6 +118,7 @@ library
                         MultiParamTypeClasses
                         NondecreasingIndentation
                         RecursiveDo
+                        ScopedTypeVariables
                         TypeOperators
                         TypeSynonymInstances
                         UnboxedTuples
@@ -125,6 +126,9 @@ library
   other-extensions:     CPP
 
   ghc-options:          -Wall -funbox-strict-fields -fspec-constr-count=10 -fno-warn-orphans
+
+  if impl(ghc >= 8.0)
+    ghc-options:        -Wcompat
 
   if flag(force-O2)
     ghc-options:        -O2
@@ -164,6 +168,9 @@ test-suite regex-tdfa-unittest
   other-extensions:     GeneralizedNewtypeDeriving
 
   ghc-options:          -Wall -funbox-strict-fields
+
+  if impl(ghc >= 8.0)
+    ghc-options:        -Wcompat
 
   if flag(force-O2)
     ghc-options:        -O2
