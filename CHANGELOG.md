@@ -1,5 +1,16 @@
 For the package version policy (PVP), see  http://pvp.haskell.org/faq .
 
+### 1.3.1.2
+
+_Unreleased_
+- No longer rely on the `MonadFail` instance for `ST`.
+  [#29](https://github.com/haskell-hvr/regex-tdfa/pull/29)
+
+### 1.3.1.2 Revision 3
+
+_2022-01-31, Andreas Abel_
+- Allow `mtl-2.3`.
+
 ### 1.3.1.1 Revision 2
 
 _2021-12-26, Andreas Abel_
