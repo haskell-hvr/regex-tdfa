@@ -5,8 +5,11 @@ For the package version policy (PVP), see  http://pvp.haskell.org/faq .
 _Unreleased_
 - No longer rely on the `MonadFail` instance for `ST`.
   [#29](https://github.com/haskell-hvr/regex-tdfa/pull/29)
+- Silence warning `incomplete-uni-patterns` (GHC >= 9.2).
+- Import `Data.List` qualified.
+- Import from `Control.Monad` directly for future `mtl` compatibility.
 
-### 1.3.1.2 Revision 3
+### 1.3.1.1 Revision 3
 
 _2022-01-31, Andreas Abel_
 - Allow `mtl-2.3`.
