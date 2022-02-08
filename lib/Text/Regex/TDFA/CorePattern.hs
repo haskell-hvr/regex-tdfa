@@ -34,6 +34,7 @@ module Text.Regex.TDFA.CorePattern(Q(..),P(..),WhichTest(..),Wanted(..)
                                   ,TestInfo,OP(..),SetTestInfo(..),NullView
                                   ,patternToQ,cleanNullView,cannotAccept,mustAccept) where
 
+import Control.Monad (liftM2, forM, replicateM)
 import Control.Monad.RWS {- all -}
 import Data.Array.IArray(Array,(!),accumArray,listArray)
 import Data.List(sort)
