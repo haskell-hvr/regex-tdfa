@@ -1,3 +1,9 @@
+{-# LANGUAGE CPP #-}
+
+#if __GLASGOW_HASKELL__ >= 902
+{-# OPTIONS_GHC -Wno-incomplete-uni-patterns #-}
+#endif
+
 -- | This is the code for the main engine.  This captures the posix subexpressions. This 'execMatch'
 -- also dispatches to "Engine_NC", "Engine_FA", and "Engine_FC_NA"
 --
@@ -719,7 +725,7 @@ copySTU _souce@(STUArray _ _ _ msource) _destination@(STUArray _ _ _ mdest) =
     case unsafeCoerce# memcpy mdest msource n# s1# of { (# s2#, () #) ->
     (# s2#, () #) }}
 {-
-#else /* !__GLASGOW_HASKELL__ */
+-- #else /* !__GLASGOW_HASKELL__ */
 
 copySTU :: (MArray (STUArray s) e (S.ST s))=> STUArray s Tag e -> STUArray s Tag e -> S.ST s (STUArray s i e)
 copySTU source destination = do
@@ -730,5 +736,5 @@ copySTU source destination = do
   forM_ (range b) $ \index ->
     set destination index =<< source !! index
   return destination
-#endif /* !__GLASGOW_HASKELL__ */
+-- #endif /* !__GLASGOW_HASKELL__ */
 -}
