@@ -156,7 +156,7 @@ This was also documented at the [Haskell wiki](https://wiki.haskell.org/Regular_
 
 Then the repository moved to <https://github.com/ChrisKuklewicz/regex-tdfa>, which was primarily maintained by [Artyom (neongreen)](https://github.com/neongreen).
 
-Finally, maintainership was passed on again and the repository moved to its current location at <https://github.com/hvr/regex-tdfa>.
+Finally, maintainership was passed on again and the repository moved to its current location at <https://github.com/haskell-hvr/regex-tdfa>.
 
 ## Avoiding backslashes
 
@@ -182,8 +182,8 @@ import Text.Regex.TDFA
 
 * POSIX submatch semantics are broken in some rare cases ([#2][]).
 
-[#2]: https://github.com/hvr/regex-tdfa/issues/2
-[#3]: https://github.com/hvr/regex-tdfa/issues/3
+[#2]: https://github.com/haskell-hvr/regex-tdfa/issues/2
+[#3]: https://github.com/haskell-hvr/regex-tdfa/issues/3
 
 ## About this package
 

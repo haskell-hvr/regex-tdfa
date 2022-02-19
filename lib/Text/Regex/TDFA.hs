@@ -2,7 +2,7 @@
 Module: Text.Regex.TDFA
 Copyright: (c) Chris Kuklewicz 2007-2009
 SPDX-License-Identifier: BSD-3-Clause
-Maintainer: hvr@gnu.org, Andreas Abel
+Maintainer: Andreas Abel
 Stability: stable
 
 The "Text.Regex.TDFA" module provides a backend for regular

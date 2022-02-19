@@ -7,11 +7,9 @@ license:                BSD3
 license-file:           LICENSE
 copyright:              Copyright (c) 2007-2009, Christopher Kuklewicz
 author:                 Christopher Kuklewicz
-maintainer:
-  Herbert Valerio Riedel <hvr@gnu.org>,
-  Andreas Abel
+maintainer:             Andreas Abel
 homepage:               https://wiki.haskell.org/Regular_expressions
-bug-reports:            https://github.com/hvr/regex-tdfa/issues
+bug-reports:            https://github.com/haskell-hvr/regex-tdfa/issues
 
 category:               Text
 synopsis:               Pure Haskell Tagged DFA Backend for "Text.Regex" (regex-base)
@@ -42,11 +40,11 @@ tested-with:
 
 source-repository head
   type:                git
-  location:            https://github.com/hvr/regex-tdfa.git
+  location:            https://github.com/haskell-hvr/regex-tdfa.git
 
 source-repository this
   type:                git
-  location:            https://github.com/hvr/regex-tdfa.git
+  location:            https://github.com/haskell-hvr/regex-tdfa.git
   tag:                 v1.3.1.2
 
 flag force-O2
