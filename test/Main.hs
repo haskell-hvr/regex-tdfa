@@ -14,7 +14,7 @@ import qualified Control.Monad.Fail   as Fail
 import           Data.Array
 import qualified Data.ByteString      as BS
 import qualified Data.ByteString.UTF8 as UTF8
-import qualified Data.List            as List
+import           Data.List            (isInfixOf, mapAccumL, sort)
 import           Data.String
 import           Data.Typeable
 import           Data.Version         ()
@@ -75,7 +75,7 @@ toTest' oldRegex line =
 
 load,load' :: String -> [(Int, String, String, String)]
 load = map toTest . lines
-load' = snd . List.mapAccumL toTest' "X_X_X_" . lines
+load' = snd . mapAccumL toTest' "X_X_X_" . lines
 
 checkTest :: PFT A -> (Int,String,String,String) -> IO [Int]
 checkTest opM (n,regex,input,output) = do
@@ -120,10 +120,10 @@ checkTests opM testCases = mapM (checkFile opM) testCases
 
 readTestCases :: FilePath -> IO [(String, String)]
 readTestCases folder = do
-  fns <- filter (".txt" `List.isSuffixOf`) <$> getDirectoryContents folder
+  fns <- filter (".txt" `isInfixOf`) <$> getDirectoryContents folder
   when (null fns) $
     fail ("readTestCases: No test-cases found in " ++ show folder)
-  forM (List.sort fns) $ \fn -> do
+  forM (sort fns) $ \fn -> do
     bs <- BS.readFile (folder </> fn)
     return (fn, UTF8.toString bs)
 
