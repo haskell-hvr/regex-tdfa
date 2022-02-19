@@ -2,27 +2,27 @@ For the package version policy (PVP), see  http://pvp.haskell.org/faq .
 
 ### 1.3.1.2
 
-_Unreleased_
-- No longer rely on the `MonadFail` instance for `ST`.
-  [#29](https://github.com/haskell-hvr/regex-tdfa/pull/29)
+_2022-02-19, Andreas Abel_
+- No longer rely on the `MonadFail` instance for `ST`
+  (future `base` library change, see [#29](https://github.com/haskell-hvr/regex-tdfa/pull/29)).
 - Silence warning `incomplete-uni-patterns` (GHC >= 9.2).
-- Import `Data.List` qualified.
-- Import from `Control.Monad` directly for future `mtl` compatibility.
+- Import from `Data.List` explicitly or qualified (warning `compat-unqualified-imports`).
+- Import from `Control.Monad` to allow `mtl-2.3` in its `rc3` incarnation.
 
 ### 1.3.1.1 Revision 3
 
 _2022-01-31, Andreas Abel_
-- Allow `mtl-2.3`.
+- Speculatively allow unreleased `mtl-2.3` (works with release candidate `mtl-2.3-rc4`).
 
 ### 1.3.1.1 Revision 2
 
 _2021-12-26, Andreas Abel_
-- Allow `text-2.0`
+- Allow `text-2.0`.
 
 ### 1.3.1.1 Revision 1
 
 _2021-08-12, Andreas Abel_
-- Compatibility with `base-4.16` (GHC 9.2)
+- Compatibility with `base-4.16` (GHC 9.2).
 
 ### 1.3.1.1
 
@@ -33,12 +33,12 @@ _2021-06-03, Andreas Abel_
 ### 1.3.1.0 Revision 2
 
 _2021-02-20, Andreas Abel_
-- Compatibility with `base-4.15` (GHC 9.0) and `bytestring-0.11`
+- Compatibility with `base-4.15` (GHC 9.0) and `bytestring-0.11`.
 
 ### 1.3.1.0 Revision 1
 
 _2020-03-26, phadej_
-- Compatibility with `base-4.14` (GHC 8.10)
+- Compatibility with `base-4.14` (GHC 8.10).
 
 ## 1.3.1.0
 
