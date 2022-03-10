@@ -35,7 +35,7 @@ module Text.Regex.TDFA.CorePattern(Q(..),P(..),WhichTest(..),Wanted(..)
                                   ,patternToQ,cleanNullView,cannotAccept,mustAccept) where
 
 import Control.Monad (liftM2, forM, replicateM)
-import Control.Monad.RWS {- all -}
+import Control.Monad.RWS (RWS, runRWS, ask, local, listens, tell, get, put)
 import Data.Array.IArray(Array,(!),accumArray,listArray)
 import Data.List(sort)
 import Data.IntMap.EnumMap2(EnumMap)
