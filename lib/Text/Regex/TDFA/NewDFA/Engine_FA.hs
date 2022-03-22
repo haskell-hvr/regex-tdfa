@@ -115,14 +115,14 @@ execMatch (Regex { regex_dfa =  DFA {d_id=didIn,d_dt=dtIn}
 -- compressOrbit.
 --
 -- compressOrbit on such a Tag loops through all the NFS states'
--- m_orbit record, discardind ones that are Nothing and discarding
+-- m_orbit record, discarding ones that are Nothing and discarding
 -- ones that are too new to care about (after the cutoff value).
 --
 -- compressOrbit then groups the Orbits records by the Tag-0 start
--- position and the basePos position.  Entried in different groups
+-- position and the basePos position.  Entries in different groups
 -- will never be comparable in the future so they can be processed
 -- separately.  Groups could probably be even more finely
--- distinguished, as a futher optimization, but the justification will
+-- distinguished, as a further optimization, but the justification will
 -- be tricky.
 --
 -- Current Tag-0 values are at most offset and all newly spawned
@@ -137,7 +137,7 @@ execMatch (Regex { regex_dfa =  DFA {d_id=didIn,d_dt=dtIn}
 -- is avoided.
 --
 -- An entry in a group can only collide with that group's
--- descendents. compressOrbit sends each group to the compressGroup
+-- descendants. compressOrbit sends each group to the compressGroup
 -- command.
 --
 -- compressGroup on a single record checks whether it's Seq can be
@@ -145,19 +145,19 @@ execMatch (Regex { regex_dfa =  DFA {d_id=didIn,d_dt=dtIn}
 -- this this not particularly important).
 --
 -- compressGroup on many records sorts and groups the members and zips
--- the groups with their new ordinal value.  The comparision is based
+-- the groups with their new ordinal value.  The comparison is based
 -- on the old ordinal value, then the inOrbit value, and then the (Seq
 -- Position) data.
 --
 -- The old ordinals of the group will all be Nothing or all be Just,
 -- but this condition is neither checked nor violations detected.
--- This comparision is justified because once records get different
+-- This comparison is justified because once records get different
 -- ordinals assigned they will never change places.
 --
 -- The inOrbit Bool is only different if one of them has set the stop
 -- position to at most (succ offset).  They will obly be compared if
 -- the other one leaves, an its stop position will be at least offset.
--- The previous sentence is justified by inspectin of the "assemble"
+-- The previous sentence is justified by inspection of the "assemble"
 -- function in the TDFA module: there is no (PostUpdate
 -- LeaveOrbitTask) so the largest possible value for the stop Tag is
 -- (pred offset). Thus the record with inOrbit==False would beat (be
@@ -165,7 +165,7 @@ execMatch (Regex { regex_dfa =  DFA {d_id=didIn,d_dt=dtIn}
 --
 -- The Seq comparison is safe because the largest existing Position
 -- value is (pred offset) and the smallest future Position value is
--- offset.  The previous sentence is justified by inspectin of the
+-- offset.  The previous sentence is justified by inspection of the
 -- "assemble" function in the TDFA module: there is no (PostUpdate
 -- EnterOrbitTags) so the largest possible value in the Seq is (pred
 -- offset).
@@ -269,7 +269,7 @@ execMatch (Regex { regex_dfa =  DFA {d_id=didIn,d_dt=dtIn}
 -- A non-empty winner from the startState might obscure a potential
 -- empty winner (form the startState at the current offset).  This
 -- winEmpty possibility is also checked for. (unit test pattern ".*")
--- (futher test "(.+|.+.)*" on "aa\n")
+-- (further test "(.+|.+.)*" on "aa\n")
 
         {-# INLINE processWinner #-}
         processWinner :: MScratch s -> IntMap Instructions -> Position -> ST s ()

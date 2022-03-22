@@ -139,7 +139,7 @@ instance Show PatternSetEquivalenceClass where
 starTrans :: Pattern -> Pattern
 starTrans = dfsPattern (simplify' . starTrans')
 
--- | Apply a Pattern transfomation function depth first
+-- | Apply a Pattern transformation function depth first
 dfsPattern :: (Pattern -> Pattern)  -- ^ The transformation function
            -> Pattern               -- ^ The Pattern to transform
            -> Pattern               -- ^ The transformed Pattern

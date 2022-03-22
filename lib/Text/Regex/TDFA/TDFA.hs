@@ -1,5 +1,5 @@
 -- | "Text.Regex.TDFA.TDFA" converts the QNFA from TNFA into the DFA.
--- A DFA state corresponds to a Set of QNFA states, repesented as list
+-- A DFA state corresponds to a Set of QNFA states, represented as list
 -- of Index which are used to lookup the DFA state in a lazy Trie
 -- which holds all possible subsets of QNFA states.
 module Text.Regex.TDFA.TDFA(patternToRegex,DFA(..),DT(..)

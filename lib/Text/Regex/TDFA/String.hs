@@ -66,7 +66,7 @@ regexec r s =
           rest = map fst (tail (elems mt)) -- will be []
       in Right (Just (pre,main,post,rest))
 
--- Minimal defintion for now
+-- Minimal definition for now
 instance RegexLike Regex String where
   matchOnce r s = listToMaybe (matchAll r s)
   matchAll r s = execMatch r 0 '\n' s
