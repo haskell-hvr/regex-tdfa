@@ -94,7 +94,7 @@ data CompOption = CompOption {
   , newSyntax :: Bool        -- ^ False in blankCompOpt, True in defaultCompOpt. Add the extended non-POSIX syntax described in "Text.Regex.TDFA" haddock documentation.
   , lastStarGreedy ::  Bool  -- ^ False by default.  This is POSIX correct but it takes space and is slower.
                             -- Setting this to true will improve performance, and should be done
-                            -- if you plan to set the captureGroups execoption to False.
+                            -- if you plan to set the captureGroups ExecOption to False.
   } deriving (Read,Show)
 
 data ExecOption = ExecOption {
@@ -226,7 +226,7 @@ data DT = Simple' { dt_win :: IntMap {- Source Index -} Instructions -- ^ Action
                    , dt_a,dt_b :: DT      -- ^ use dt_a if test is True else use dt_b
                    }
 
--- | Internal type to repesent the commands for the tagged transition.
+-- | Internal type to represent the commands for the tagged transition.
 -- The outer IntMap is for the destination Index and the inner IntMap
 -- is for the Source Index.  This is convenient since all runtime data
 -- going to the same destination must be compared to find the best.
@@ -246,7 +246,7 @@ type DTrans' = [(Index, [(Index, (DoPa, ([(Tag, (Position,Bool))],[String])))])]
 -- Maximize Tag), the middle positions in the Seq, and the final
 -- position is NOT saved in the Orbits (only in a Maximize Tag).
 --
--- The orderinal code is being written XXX TODO document it.
+-- The original code is being written XXX TODO document it.
 data Orbits = Orbits
   { inOrbit :: !Bool        -- True if enterOrbit, False if LeaveOrbit
   , basePos :: Position

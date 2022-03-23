@@ -33,7 +33,7 @@ parseRegex x = runParser (do pat <- p_regex
 p_regex :: CharParser (GroupIndex,Int) Pattern
 p_regex = liftM POr $ sepBy1 p_branch (char '|')
 
--- man re_format helps alot, it says one-or-more pieces so this is
+-- man re_format helps a lot, it says one-or-more pieces so this is
 -- many1 not many.  Use "()" to indicate an empty piece.
 p_branch = liftM PConcat $ many1 p_piece
 

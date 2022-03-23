@@ -178,7 +178,7 @@ execMatch r@(Regex { regex_dfa = DFA {d_id=didIn,d_dt=dtIn}
 -- position and the basePos position.  Entries in different groups
 -- will never be comparable in the future so they can be processed
 -- separately.  Groups could probably be even more finely
--- distinguished, as a futher optimization, but the justification will
+-- distinguished, as a further optimization, but the justification will
 -- be tricky.
 --
 -- Current Tag-0 values are at most offset and all newly spawned
@@ -193,7 +193,7 @@ execMatch r@(Regex { regex_dfa = DFA {d_id=didIn,d_dt=dtIn}
 -- is avoided.
 --
 -- An entry in a group can only collide with that group's
--- descendents. compressOrbit sends each group to the compressGroup
+-- descendants. compressOrbit sends each group to the compressGroup
 -- command.
 --
 -- compressGroup on a single record checks whether it's Seq can be
@@ -201,19 +201,19 @@ execMatch r@(Regex { regex_dfa = DFA {d_id=didIn,d_dt=dtIn}
 -- this this not particularly important).
 --
 -- compressGroup on many records sorts and groups the members and zips
--- the groups with their new ordinal value.  The comparision is based
+-- the groups with their new ordinal value.  The comparison is based
 -- on the old ordinal value, then the inOrbit value, and then the (Seq
 -- Position) data.
 --
 -- The old ordinals of the group will all be Nothing or all be Just,
 -- but this condition is neither checked nor violations detected.
--- This comparision is justified because once records get different
+-- This comparison is justified because once records get different
 -- ordinals assigned they will never change places.
 --
 -- The inOrbit Bool is only different if one of them has set the stop
--- position to at most (succ offset).  They will obly be compared if
+-- position to at most (succ offset).  They will only be compared if
 -- the other one leaves, an its stop position will be at least offset.
--- The previous sentence is justified by inspectin of the "assemble"
+-- The previous sentence is justified by inspection of the "assemble"
 -- function in the TDFA module: there is no (PostUpdate
 -- LeaveOrbitTask) so the largest possible value for the stop Tag is
 -- (pred offset). Thus the record with inOrbit==False would beat (be
@@ -221,7 +221,7 @@ execMatch r@(Regex { regex_dfa = DFA {d_id=didIn,d_dt=dtIn}
 --
 -- The Seq comparison is safe because the largest existing Position
 -- value is (pred offset) and the smallest future Position value is
--- offset.  The previous sentence is justified by inspectin of the
+-- offset.  The previous sentence is justified by inspection of the
 -- "assemble" function in the TDFA module: there is no (PostUpdate
 -- EnterOrbitTags) so the largest possible value in the Seq is (pred
 -- offset).
@@ -323,7 +323,7 @@ execMatch r@(Regex { regex_dfa = DFA {d_id=didIn,d_dt=dtIn}
 -- A non-empty winner from the startState might obscure a potential
 -- empty winner (form the startState at the current offset).  This
 -- winEmpty possibility is also checked for. (unit test pattern ".*")
--- (futher test "(.+|.+.)*" on "aa\n")
+-- (further test "(.+|.+.)*" on "aa\n")
 
         {-# INLINE processWinner #-}
         processWinner s1 did dt w offset = {-# SCC "goNext.newWinnerThenProceed" #-} do
@@ -716,7 +716,7 @@ data STUArray s i e
 -- This has been updated for ghc 6.8.3 and still works with ghc 6.10.1
 {-# INLINE copySTU #-}
 copySTU :: (Show i,Ix i,MArray (STUArray s) e (S.ST s)) => STUArray s i e -> STUArray s i e -> S.ST s () -- (STUArray s i e)
-copySTU _souce@(STUArray _ _ _ msource) _destination@(STUArray _ _ _ mdest) =
+copySTU _source@(STUArray _ _ _ msource) _destination@(STUArray _ _ _ mdest) =
 -- do b1 <- getBounds s1
 --  b2 <- getBounds s2
 --  when (b1/=b2) (error ("\n\nWTF copySTU: "++show (b1,b2)))

@@ -11,7 +11,7 @@
 --
 -- This holds every possible way to follow one state by another, while
 -- in the DFA these will be reduced by picking a single best
--- transition for each (soure,destination) pair.  The transitions are
+-- transition for each (source,destination) pair.  The transitions are
 -- heavily and often redundantly annotated with tasks to perform, and
 -- this redundancy is reduced when picking the best transition.  So
 -- far, keeping all this information has helped fix bugs in both the
@@ -19,7 +19,7 @@
 --
 -- The QNFA for a Pattern with a starTraned Q\/P form with N one
 -- character accepting leaves has at most N+1 nodes.  These nodes
--- repesent the future choices after accepting a leaf.  The processing
+-- represent the future choices after accepting a leaf.  The processing
 -- of Or nodes often reduces this number by sharing at the end of the
 -- different paths.  Turning off capturing while compiling the pattern
 -- may (future extension) reduce this further for some patterns by
@@ -71,7 +71,7 @@ debug _ s = s
 
 qtwin,qtlose :: QT
 -- qtwin is the continuation after matching the whole pattern.  It has
--- no futher transitions and sets tag #1 to the current position.
+-- no further transitions and sets tag #1 to the current position.
 qtwin = Simple {qt_win=[(1,PreUpdate TagTask)],qt_trans=mempty,qt_other=mempty}
 -- qtlose is the continuation to nothing, used when ^ or $ tests fail.
 qtlose = Simple {qt_win=mempty,qt_trans=mempty,qt_other=mempty}
@@ -221,7 +221,7 @@ applyTest (wt,dopa) qt | nullQT qt = qt
 -- are handled.
 --
 -- mergeQT_2nd is used by the NonEmpty case and always discards the
--- first argument's win and uses the second argment's win.
+-- first argument's win and uses the second argument's win.
 --
 -- mergeAltQT is used by the Or cases and is biased to the first
 -- argument's winning transition, if present.
@@ -238,7 +238,7 @@ mergeQT q1 q2 | nullQT q1 = q2  -- union wins
               | nullQT q2 = q1  -- union wins
               | otherwise = mergeQTWith mappend q1 q2 -- no preference, win with combined SetTag XXX is the wrong thing! "(.?)*"
 
--- This takes a function which implements a policy on mergining
+-- This takes a function which implements a policy on merging
 -- winning transitions and then merges all the transitions.  It opens
 -- the CharMap newtype for more efficient operation, then rewraps it.
 mergeQTWith :: (WinTags -> WinTags -> WinTags) -> QT -> QT -> QT
@@ -408,7 +408,7 @@ getE (_,_,Just (tags,qnfa)) = (tags, Left qnfa)  -- consume optimized mQNFA valu
 getE (eLoop,Just accepting,_) = fromQT (mergeQT (getQT eLoop) (getQT accepting))
 getE (eLoop,Nothing,_) = eLoop
 
--- 2009: See coment for addTest.  Here is a case where the third component might be a (Just qnfa) and it
+-- 2009: See comment for addTest.  Here is a case where the third component might be a (Just qnfa) and it
 -- is being lost even though the added test might be redundant.
 addTestAC :: TestInfo -> ActCont -> ActCont
 addTestAC ti (e,mE,_) = (addTest ti e
@@ -756,7 +756,7 @@ qToNFA compOpt qTop = (q_id startingQNFA
            let trans = toMap mempty . S.toAscList . addNewline . decodePatternSet $ ps
            in Simple { qt_win = mempty, qt_trans = trans, qt_other = target }
          _ -> err ("Cannot acceptTrans pattern "++show (qTop,pIn))
-    where  -- Take a common destination and a sorted list of unique chraceters
+    where  -- Take a common destination and a sorted list of unique characters
            -- and create a map from those characters to the common destination
       toMap :: IntMap [(DoPa,[(Tag, TagUpdate)])] -> [Char]
             -> CharMap (IntMap [(DoPa,[(Tag, TagUpdate)])])
@@ -795,7 +795,7 @@ decodePatternSet (PatternSet msc mscc _ msec) =
       withMSEC = foldl (flip S.insert) withMSCC (maybe [] (concatMap unSEC . S.toAscList) msec)
   in withMSEC
 
--- | This returns the disctince ascending list of characters
+-- | This returns the distinct ascending list of characters
 -- represented by [: :] values in legalCharacterClasses; unrecognized
 -- class names return an empty string
 decodeCharacterClass :: PatternSetCharacterClass -> String

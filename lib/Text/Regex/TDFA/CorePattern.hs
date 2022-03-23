@@ -269,7 +269,7 @@ cannotAccept q = maybe False (0==) $ snd . takes $ q
 -- favoring pushing Apply into the child postTag makes PGroup happier
 
 type PM = RWS (Maybe GroupIndex) [Either Tag GroupInfo] ([OP]->[OP],Tag)
-type HHQ = HandleTag  -- m1 : info about left boundaary / preTag
+type HHQ = HandleTag  -- m1 : info about left boundary / preTag
         -> HandleTag  -- m2 : info about right boundary / postTag
         -> PM Q
 
@@ -389,7 +389,7 @@ patternToQ compOpt (pOrig,(maxGroupIndex,_)) = (tnfa,aTags,aGroups) where
 
   -- combineConcat is a partial function: Must not pass in an empty list
   -- Policy choices:
-  --  * pass tags to apply to children and have no preTag or postTag here (so none addded to nullQ)
+  --  * pass tags to apply to children and have no preTag or postTag here (so none added to nullQ)
   --  * middle 'mid' tag: give to left/front child as postTag so a Group there might claim it as a stopTag
   --  * if parent is Group then preReset will become non-empty
   combineConcat :: [Pattern] -> HHQ
@@ -465,7 +465,7 @@ patternToQ compOpt (pOrig,(maxGroupIndex,_)) = (tnfa,aTags,aGroups) where
                newUniq = if needUniqTags then uniq "POr branch" else return bAdvice
 --           trace ("\nPOr sub "++show aAdvice++" "++show bAdvice++"needsTags is "++show needTags) $ return ()
            -- The "bs" values are allocated in left-to-right order before the children in "qs"
-           -- optimiztion: low priority for last branch is implicit, do not create separate tag here.
+           -- optimization: low priority for last branch is implicit, do not create separate tag here.
            bs <- fmap (++[bAdvice]) $ replicateM (pred $ length branches) newUniq -- 2 <= length ps
            -- create all the child branches in left-to-right order after the "bs"
            qs <- forM (zip branches bs) (\(branch,bTag) ->  (go branch aAdvice bTag))
@@ -544,7 +544,7 @@ patternToQ compOpt (pOrig,(maxGroupIndex,_)) = (tnfa,aTags,aGroups) where
          --
          -- If the parent index is Nothing then this is part of a
          -- non-capturing subtree and ignored.  This is a lazy and
-         -- efficient alternative to rebuidling the tree with PGroup
+         -- efficient alternative to rebuilding the tree with PGroup
          -- Nothing replacing PGroup (Just _).
          --
          -- Guarded by the getParentIndex /= Nothing check is the
@@ -593,7 +593,7 @@ Change the NullView to use a tasktags instead of wintags since they are all PreU
          -- PNonEmpty means the child pattern p can be skipped by
          -- bypassing the pattern.  This is only used in the case p
          -- can accept 0 and can accept more than zero characters
-         -- (thus the assertions, enforcted by CorePattern.starTrans).
+         -- (thus the assertions, enforced by CorePattern.starTrans).
          -- The important thing about this case is intercept the
          -- "accept 0" possibility and replace with "skip".
          PNonEmpty p -> mdo
