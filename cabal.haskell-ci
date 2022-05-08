@@ -1,1 +1,5 @@
 installed: +all -text
+
+constraint-set mtl-2.3
+  ghc: >= 8.6
+  constraints: mtl >= 2.3, transformers >= 0.6
