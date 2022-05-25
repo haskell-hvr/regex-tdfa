@@ -1,3 +1,5 @@
+branches: master
+
 installed: +all -text
 
 constraint-set mtl-2.3
