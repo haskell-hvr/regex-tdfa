@@ -1,5 +1,11 @@
 For the package version policy (PVP), see  http://pvp.haskell.org/faq .
 
+### 1.3.1.2 Revision 1
+
+_2022-05-25, Andreas Abel_
+
+- Allow `base >= 4.17` (GHC 9.4)
+
 ### 1.3.1.2
 
 _2022-02-19, Andreas Abel_
