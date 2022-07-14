@@ -127,6 +127,10 @@ POSIX character class inside `[...]`.  E.g., `[[:digit:][:lower:]_]` is short fo
 and defined in module
 [`TNFA`](https://github.com/haskell-hvr/regex-tdfa/blob/95d47cb982d2cf636b2cb6260a866f9907341c45/lib/Text/Regex/TDFA/TNFA.hs#L804-L816).
 
+Please also consult a variant of this documentation which is part of the
+[Text.Regex.TDFA haddock](http://hackage.haskell.org/package/regex-tdfa/docs/Text-Regex-TDFA.html),
+and the original documentation at the [Haskell wiki](https://wiki.haskell.org/Regular_expressions#regex-tdfa).
+
 ### Less common stuff
 
 #### Get match indices
@@ -154,16 +158,6 @@ getAllSubmatches (a =~ b) :: [(Int, Int)]  -- (index, length)
 ### Replacement
 
 `regex-tdfa` does not provide find-and-replace.
-
-## The relevant links
-
-This documentation is also available in [Text.Regex.TDFA haddock](http://hackage.haskell.org/package/regex-tdfa-1.2.3.2/docs/Text-Regex-TDFA.html).
-
-This was also documented at the [Haskell wiki](https://wiki.haskell.org/Regular_expressions#regex-tdfa).  The original Darcs repository was at [code.haskell.org](http://code.haskell.org/regex-tdfa/).  When not updated, this was forked and maintained by Roman Cheplyaka as [regex-tdfa-rc](http://hackage.haskell.org/package/regex-tdfa-rc).
-
-Then the repository moved to <https://github.com/ChrisKuklewicz/regex-tdfa>, which was primarily maintained by [Artyom (neongreen)](https://github.com/neongreen).
-
-Finally, maintainership was passed on again and the repository moved to its current location at <https://github.com/haskell-hvr/regex-tdfa>.
 
 ## Avoiding backslashes
 
@@ -200,10 +194,23 @@ By building on this thesis and adding a few more optimizations, regex-tdfa match
 
 Regardless of performance, nearly every single OS and Libra for POSIX regular expressions has bugs in sub-matches.  This was detailed on the [Regex POSIX Haskell wiki page](https://wiki.haskell.org/Regex_Posix), and can be demonstrated with the [regex-posix-unittest](http://hackage.haskell.org/package/regex-posix-unittest) suite of checks.  Test [regex-tdfa-unittest](http://hackage.haskell.org/package/regex-tdfa-unittest) should show regex-tdfa passing these same checks.  I owe my understanding of the correct behvior and many of these unit tests to Glenn Fowler at AT&T ("An Interpretation of the POSIX regex Standard").
 
+### Maintainance history
+
+The original Darcs repository was at [code.haskell.org](http://code.haskell.org/regex-tdfa/).
+For a while a fork was maintained by Roman Cheplyaka as
+[regex-tdfa-rc](http://hackage.haskell.org/package/regex-tdfa-rc).
+
+Then the repository moved to <https://github.com/ChrisKuklewicz/regex-tdfa>,
+which was primarily maintained by [Artyom (neongreen)](https://github.com/neongreen).
+
+Finally, maintainership was passed on again and the repository moved to its current location
+at <https://github.com/haskell-hvr/regex-tdfa>.
+
 ## Other related packages
 
-You can find several other related packages by searching for "tdfa" on [hackage](http://hackage.haskell.org/packages/search?terms=tdfa).
+Searching for "tdfa" on [hackage](http://hackage.haskell.org/packages/search?terms=tdfa)
+finds some related packages (unmaintained as of 2022-07-14).
 
 ## Document notes
 
-This was written 2016-04-30.
+This README was originally written 2016-04-30.
