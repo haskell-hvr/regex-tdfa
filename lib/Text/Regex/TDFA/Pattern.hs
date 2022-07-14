@@ -1,6 +1,9 @@
+{-# OPTIONS_GHC -fno-warn-incomplete-uni-patterns #-}
+
 -- | This "Text.Regex.TDFA.Pattern" module provides the 'Pattern' data
 -- type and its subtypes.  This 'Pattern' type is used to represent
 -- the parsed form of a Regular Expression.
+
 module Text.Regex.TDFA.Pattern
     (Pattern(..)
     ,PatternSet(..)
@@ -105,9 +108,9 @@ instance Show PatternSet where
     in shows charSpec
        . showsPrec i scc' . showsPrec i sce' . showsPrec i sec'
        . if '-' `elem` special then showChar '-' else id
-    where byRange xAll@(x:xs) | length xAll <=3 = xAll
-                              | otherwise = groupRange x 1 xs
-          byRange _ = undefined
+    where byRange xAll@(~(x:xs))
+            | length xAll <=3 = xAll
+            | otherwise       = groupRange x 1 xs
           groupRange x n (y:ys) = if (fromEnum y)-(fromEnum x) == n then groupRange x (succ n) ys
                                   else (if n <=3 then take n [x..]
                                         else x:'-':(toEnum (pred n+fromEnum x)):[]) ++ groupRange y 1 ys
