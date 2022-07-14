@@ -55,7 +55,7 @@ a =~ b :: String  -- or ByteString, or Text...
 λ> "alexis-de-tocqueville" =~ "[a-z]+" :: String
 >>> "alexis"
 
-λ> "alexis-de-tocqueville" =~ "[0-9]+" :: String
+λ> "alexis-de-tocqueville" =~ "[[:digit:]]+" :: String
 >>> ""
 ```
 
@@ -103,7 +103,7 @@ getAllTextMatches (a =~ b) :: [String]
 λ> getAllTextMatches ("john anne yifan" =~ "[a-z]+") :: [String]
 >>> ["john","anne","yifan"]
 
-λ> getAllTextMatches ("0a0b0" =~ "0[a-z]0") :: [String]
+λ> getAllTextMatches ("0a0b0" =~ "0[[:lower:]]0") :: [String]
 >>> ["0a0"]
 ```
 Note that `"0b0"` is not included in the result since it overlaps with `"0a0"`.
@@ -119,6 +119,13 @@ featureful than some other regex engines you might be used to, such as PCRE.
 * `\>` &mdash; Match end of word
 * `\b` &mdash; Match beginning or end of word
 * `\B` &mdash; Match neither beginning nor end of word
+
+While shorthands like `\d` (for digit) are not recognized, one can use the respective
+POSIX character class inside `[...]`.  E.g., `[[:digit:][:lower:]_]` is short for
+`[0-9a-z_]`.  The supported character classes are listed on
+[Wikipedia](https://en.wikipedia.org/w/index.php?title=Regular_expression&oldid=1095256273#Character_classes)
+and defined in module
+[`TNFA`](https://github.com/haskell-hvr/regex-tdfa/blob/95d47cb982d2cf636b2cb6260a866f9907341c45/lib/Text/Regex/TDFA/TNFA.hs#L804-L816).
 
 ### Less common stuff
 
