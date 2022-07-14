@@ -36,7 +36,9 @@ module Text.Regex.TDFA.CorePattern(Q(..),P(..),WhichTest(..),Wanted(..)
 
 import Control.Monad (liftM2, forM, replicateM)
 import Control.Monad.RWS (RWS, runRWS, ask, local, listens, tell, get, put)
+
 import Data.Array.IArray(Array,(!),accumArray,listArray)
+import Data.Either (partitionEithers, rights)
 import Data.List(sort)
 import Data.IntMap.EnumMap2(EnumMap)
 import qualified Data.IntMap.EnumMap2 as Map(singleton,null,assocs,keysSet)
@@ -44,6 +46,7 @@ import qualified Data.IntMap.EnumMap2 as Map(singleton,null,assocs,keysSet)
 import Data.IntSet.EnumSet2(EnumSet)
 import qualified Data.IntSet.EnumSet2 as Set(singleton,toList,isSubsetOf)
 import Data.Semigroup as Sem
+
 import Text.Regex.TDFA.Common {- all -}
 import Text.Regex.TDFA.Pattern(Pattern(..),starTrans)
 -- import Debug.Trace
@@ -278,18 +281,6 @@ makeGroupArray :: GroupIndex -> [GroupInfo] -> Array GroupIndex [GroupInfo]
 makeGroupArray maxGroupIndex groups = accumArray (\earlier later -> later:earlier) [] (1,maxGroupIndex) filler
     where filler = map (\gi -> (thisIndex gi,gi)) groups
 
-fromRight :: [Either Tag GroupInfo] -> [GroupInfo]
-fromRight [] = []
-fromRight ((Right x):xs) = x:fromRight xs
-fromRight ((Left _):xs) = fromRight xs
-
-partitionEither :: [Either Tag GroupInfo] -> ([Tag],[GroupInfo])
-partitionEither = helper id id where
-  helper :: ([Tag]->[Tag]) -> ([GroupInfo]->[GroupInfo]) -> [Either Tag GroupInfo] -> ([Tag],[GroupInfo])
-  helper ls rs [] = (ls [],rs [])
-  helper ls rs ((Right x):xs) = helper  ls      (rs.(x:)) xs
-  helper ls rs ((Left  x):xs) = helper (ls.(x:)) rs       xs
-
 -- Partial function: assumes starTrans has been run on the Pattern
 -- Note that the lazy dependency chain for this very zigzag:
 --   varies information is sent up the tree
@@ -305,7 +296,7 @@ patternToQ :: CompOption -> (Pattern,(GroupIndex,DoPa)) -> (Q,Array Tag OP,Array
 patternToQ compOpt (pOrig,(maxGroupIndex,_)) = (tnfa,aTags,aGroups) where
   (tnfa,(tag_dlist,nextTag),groups) = runRWS monad startReader startState
   aTags = listArray (0,pred nextTag) (tag_dlist [])
-  aGroups = makeGroupArray maxGroupIndex (fromRight groups)
+  aGroups = makeGroupArray maxGroupIndex (rights groups)
 
   -- implicitly inside a PGroup 0 converted into a GroupInfo 0 undefined 0 1
   monad = go (starTrans pOrig) (Advice 0) (Advice 1)
@@ -354,8 +345,7 @@ patternToQ compOpt (pOrig,(maxGroupIndex,_)) = (tnfa,aTags,aGroups) where
   -- withOrbit uses MonadWriter(listens to makeOrbit/Left), collects
   -- children at all depths
   withOrbit :: PM a -> PM (a,[Tag])
-  withOrbit = listens childStars
-    where childStars x = let (ts,_) = partitionEither x in ts
+  withOrbit = listens $ fst . partitionEithers
 
   {-# INLINE makeGroup #-}
   -- makeGroup usesMonadWriter(tell/Right)
@@ -380,7 +370,7 @@ patternToQ compOpt (pOrig,(maxGroupIndex,_)) = (tnfa,aTags,aGroups) where
   withParent :: GroupIndex -> PM a -> PM (a,[Tag])
   withParent this = local (const (Just this)) . listens childGroupInfo
     where childGroupInfo x =
-            let (_,gs) = partitionEither x
+            let gs = snd $ partitionEithers x
                 children :: [GroupIndex]
                 children = norep . sort . map thisIndex
                            -- filter to get only immediate children (efficiency)
