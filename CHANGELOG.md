@@ -1,5 +1,12 @@
 For the package version policy (PVP), see  http://pvp.haskell.org/faq .
 
+### 1.3.1.3
+
+_2022-07-14, Andreas Abel_
+
+- Fix an `undefined` in `Show PatternSet` [#37](https://github.com/haskell-hvr/regex-tdfa/issues/37))
+- Document POSIX character classes (e.g. `[[:digit:]]`)
+
 ### 1.3.1.2 Revision 1
 
 _2022-05-25, Andreas Abel_
