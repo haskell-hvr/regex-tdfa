@@ -4,7 +4,7 @@ module Data.IntMap.EnumMap2 where
 
 import Data.Foldable as F (Foldable(foldMap))
 import qualified Data.IntMap as M
-#if MIN_VERSION_containers(0,6,0)
+#if MIN_VERSION_containers(0,5,11)
 import qualified Data.IntMap.Internal.Debug as MD
 #else
 import qualified Data.IntMap as MD

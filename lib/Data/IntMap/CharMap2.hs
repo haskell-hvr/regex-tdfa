@@ -9,7 +9,7 @@ import Data.Char (chr)
 import Data.Char as C(ord)
 import Data.List as L (map)
 import qualified Data.IntMap as M
-#if MIN_VERSION_containers(0,6,0)
+#if MIN_VERSION_containers(0,5,11)
 import qualified Data.IntMap.Internal.Debug as MD
 #else
 import qualified Data.IntMap as MD
