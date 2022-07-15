@@ -1,7 +1,9 @@
 {-# OPTIONS -funbox-strict-fields #-}
--- | Common provides simple functions to the backend.  It defines most
--- of the data types.  All modules should call error via the
--- common_error function below.
+
+-- | Common provides simple functions to the backend.
+-- It defines most of the data types.
+-- All modules should call 'error' via the 'common_error' function below.
+
 module Text.Regex.TDFA.Common where
 
 import Text.Regex.Base(RegexOptions(..))
@@ -31,14 +33,14 @@ common_error moduleName message =
 on :: (t1 -> t1 -> t2) -> (t -> t1) -> t -> t -> t2
 f `on` g = (\x y -> (g x) `f` (g y))
 
--- | after 'sort' or 'sortBy' the use of 'nub'\/'nubBy' can be replaced by 'norep'\/'norepBy'
+-- | After 'sort' or 'sortBy' the use of 'nub' or 'nubBy' can be replaced by 'norep' or 'norepBy'.
 norep :: (Eq a) => [a]->[a]
 norep [] = []
 norep x@[_] = x
 norep (a:bs@(c:cs)) | a==c = norep (a:cs)
                     | otherwise = a:norep bs
 
--- | after 'sort' or 'sortBy' the use of 'nub'\/'nubBy' can be replaced by 'norep'\/'norepBy'
+-- | After 'sort' or 'sortBy' the use of 'nub' or 'nubBy' can be replaced by 'norep' or 'norepBy'.
 norepBy :: (a -> a -> Bool) -> [a] -> [a]
 norepBy _ [] = []
 norepBy _ x@[_] = x
@@ -68,8 +70,7 @@ flipOrder EQ = EQ
 noWin :: WinTags -> Bool
 noWin = null
 
--- | Used to track elements of the pattern that accept characters or
--- are anchors
+-- | Used to track elements of the pattern that accept characters or are anchors.
 newtype DoPa = DoPa {dopaIndex :: Int} deriving (Eq,Ord)
 
 instance Enum DoPa where
@@ -82,19 +83,26 @@ instance Show DoPa where
 -- | Control whether the pattern is multiline or case-sensitive like Text.Regex and whether to
 -- capture the subgroups (\\1, \\2, etc).  Controls enabling extra anchor syntax.
 data CompOption = CompOption {
-    caseSensitive :: Bool    -- ^ True in blankCompOpt and defaultCompOpt
-  , multiline :: Bool {- ^ False in blankCompOpt, True in defaultCompOpt. Compile for
-                      newline-sensitive matching.  "By default, newline is a completely ordinary
-                      character with no special meaning in either REs or strings.  With this flag,
-                      inverted bracket expressions and . never match newline, a ^ anchor matches the
-                      null string after any newline in the string in addition to its normal
-                      function, and the $ anchor matches the null string before any newline in the
-                      string in addition to its normal function." -}
-  , rightAssoc :: Bool       -- ^ True (and therefore Right associative) in blankCompOpt and defaultCompOpt
-  , newSyntax :: Bool        -- ^ False in blankCompOpt, True in defaultCompOpt. Add the extended non-POSIX syntax described in "Text.Regex.TDFA" haddock documentation.
-  , lastStarGreedy ::  Bool  -- ^ False by default.  This is POSIX correct but it takes space and is slower.
-                            -- Setting this to true will improve performance, and should be done
-                            -- if you plan to set the captureGroups ExecOption to False.
+    caseSensitive :: Bool
+      -- ^ True in 'blankCompOpt' and 'defaultCompOpt'.
+  , multiline :: Bool
+      -- ^ False in 'blankCompOpt', True in 'defaultCompOpt'.
+      -- Compile for newline-sensitive matching.
+      --
+      -- From [regexp man page](https://www.tcl.tk/man/tcl8.4/TclCmd/regexp.html#M8):
+      -- "By default, newline is a completely ordinary character with no special meaning in either REs or strings.
+      -- With this flag, inverted bracket expressions @[^@ and @.@ never match newline,
+      -- a @^@ anchor matches the null string after any newline in the string in addition to its normal function,
+      -- and the @$@ anchor matches the null string before any newline in the string in addition to its normal function."
+  , rightAssoc :: Bool
+      -- ^ True (and therefore right associative) in 'blankCompOpt' and 'defaultCompOpt'.
+  , newSyntax :: Bool
+      -- ^ False in 'blankCompOpt', True in 'defaultCompOpt'.
+      -- Enables the extended non-POSIX syntax described in "Text.Regex.TDFA" haddock documentation.
+  , lastStarGreedy ::  Bool
+      -- ^ False by default.  This is POSIX correct but it takes space and is slower.
+      -- Setting this to True will improve performance, and should be done
+      -- if you plan to set the 'captureGroups' 'ExecOption' to False.
   } deriving (Read,Show)
 
 data ExecOption = ExecOption {
@@ -102,28 +110,31 @@ data ExecOption = ExecOption {
   } deriving (Read,Show)
 
 -- | Used by implementation to name certain Postions during
--- matching. Identity of Position tag to set during a transition
+-- matching. Identity of Position tag to set during a transition.
 type Tag = Int
--- | Internal use to indicate type of tag and preference for larger or smaller Positions
+
+-- | Internal use to indicate type of tag and preference for larger or smaller Positions.
 data OP = Maximize | Minimize | Orbit | Ignore deriving (Eq,Show)
--- | Internal NFA node identity number
+
+-- | Internal NFA node identity number.
 type Index = Int
--- | Internal DFA identity is this Set of NFA Index
+
+-- | Internal DFA identity is this Set of NFA Index.
 type SetIndex = IntSet {- Index -}
--- | Index into the text being searched
+
+-- | Index into the text being searched.
 type Position = Int
 
--- | GroupIndex is for indexing submatches from capturing
--- parenthesized groups (PGroup\/Group)
+-- | GroupIndex is for indexing submatches from capturing parenthesized groups ('PGroup' or 'Group').
 type GroupIndex = Int
--- | GroupInfo collects the parent and tag information for an instance
--- of a group
+
+-- | GroupInfo collects the parent and tag information for an instance of a group.
 data GroupInfo = GroupInfo {
     thisIndex, parentIndex :: GroupIndex
   , startTag, stopTag, flagTag :: Tag
   } deriving Show
 
--- | The TDFA backend specific 'Regex' type, used by this module's RegexOptions and RegexMaker
+-- | The TDFA backend specific 'Regex' type, used by this module's 'RegexOptions' and 'RegexMaker'.
 data Regex = Regex {
     regex_dfa :: DFA                             -- ^ starting DFA state
   , regex_init :: Index                          -- ^ index of starting state
@@ -161,10 +172,10 @@ data WinEmpty = WinEmpty Instructions
               | WinTest WhichTest (Maybe WinEmpty) (Maybe WinEmpty)
   deriving Show
 
--- | Internal NFA node type
+-- | Internal NFA node type.
 data QNFA = QNFA {q_id :: Index, q_qt :: QT}
 
--- | Internal to QNFA type.
+-- | Internal to 'QNFA' type.
 data QT = Simple { qt_win :: WinTags -- ^ empty transitions to the virtual winning state
                  , qt_trans :: CharMap QTrans -- ^ all ways to leave this QNFA to other or the same QNFA
                  , qt_other :: QTrans -- ^ default ways to leave this QNFA to other or the same QNFA
@@ -182,29 +193,38 @@ type QTrans = IntMap {- Destination Index -} [TagCommand]
 -- Also support for GNU extensions is being added: \\\` beginning of
 -- buffer, \\\' end of buffer, \\\< and \\\> for begin and end of words, \\b
 -- and \\B for word boundary and not word boundary.
-data WhichTest = Test_BOL | Test_EOL -- '^' and '$' (affected by multiline option)
-               | Test_BOB | Test_EOB -- \` and \' begin and end buffer
-               | Test_BOW | Test_EOW -- \< and \> begin and end word
-               | Test_EdgeWord | Test_NotEdgeWord -- \b and \B word boundaries
+data WhichTest
+  = Test_BOL          -- ^ @^@ (affected by multiline option)
+  | Test_EOL          -- ^ @$@ (affected by multiline option)
+  | Test_BOB          -- ^ @\\`@ beginning of buffer
+  | Test_EOB          -- ^ @\\'@ end ofbuffer
+  | Test_BOW          -- ^ @\\<@ beginning of word
+  | Test_EOW          -- ^ @\\>@ end of word
+  | Test_EdgeWord     -- ^ @\\b@ word boundary
+  | Test_NotEdgeWord  -- ^ @\\B@ not word boundary
   deriving (Show,Eq,Ord,Enum)
 
--- | The things that can be done with a Tag.  TagTask and
--- ResetGroupStopTask are for tags with Maximize or Minimize OP
--- values.  ResetOrbitTask and EnterOrbitTask and LeaveOrbitTask are
+-- | The things that can be done with a Tag.  'TagTask' and
+-- 'ResetGroupStopTask' are for tags with Maximize or Minimize OP
+-- values.  'ResetOrbitTask' and 'EnterOrbitTask' and 'LeaveOrbitTask' are
 -- for tags with Orbit OP value.
 data TagTask = TagTask | ResetGroupStopTask | SetGroupStopTask
              | ResetOrbitTask | EnterOrbitTask | LeaveOrbitTask deriving (Show,Eq)
 
--- | Ordered list of tags and their associated Task
+-- | Ordered list of tags and their associated Task.
 type TagTasks = [(Tag,TagTask)]
+
 -- | When attached to a QTrans the TagTask can be done before or after
 -- accepting the character.
 data TagUpdate = PreUpdate TagTask | PostUpdate TagTask deriving (Show,Eq)
+
 -- | Ordered list of tags and their associated update operation.
 type TagList = [(Tag,TagUpdate)]
+
 -- | A TagList and the location of the item in the original pattern
 -- that is being accepted.
 type TagCommand = (DoPa,TagList)
+
 -- | Ordered list of tags and their associated update operation to
 -- perform on an empty transition to the virtual winning state.
 type WinTags = TagList
@@ -227,26 +247,25 @@ data DT = Simple' { dt_win :: IntMap {- Source Index -} Instructions -- ^ Action
                    }
 
 -- | Internal type to represent the commands for the tagged transition.
--- The outer IntMap is for the destination Index and the inner IntMap
+-- The outer 'IntMap' is for the destination Index and the inner 'IntMap'
 -- is for the Source Index.  This is convenient since all runtime data
 -- going to the same destination must be compared to find the best.
 --
--- A Destination IntMap entry may have an empty Source IntMap if and
--- only if the destination is the starting index and the NFA\/DFA.
+-- A Destination 'IntMap' entry may have an empty Source 'IntMap' if and
+-- only if the destination is the starting index and the NFA or DFA.
 -- This instructs the matching engine to spawn a new entry starting at
 -- the post-update position.
 type DTrans = IntMap {- Index of Destination -} (IntMap {- Index of Source -} (DoPa,Instructions))
 -- type DTrans = IntMap {- Index of Destination -} (IntMap {- Index of Source -} (DoPa,RunState ()))
--- | Internal convenience type for the text display code
+
+-- | Internal convenience type for the text display code.
 type DTrans' = [(Index, [(Index, (DoPa, ([(Tag, (Position,Bool))],[String])))])]
 
--- | Positions for which a * was re-started while looping.  Need to
+-- | Positions for which a @*@ was re-started while looping.  Need to
 -- append locations at back but compare starting with front, so use
--- Seq as a Queue.  The initial position is saved in basePos (and a
--- Maximize Tag), the middle positions in the Seq, and the final
+-- 'Seq' as a queue.  The initial position is saved in 'basePos' (and a
+-- Maximize Tag), the middle positions in the 'Seq', and the final
 -- position is NOT saved in the Orbits (only in a Maximize Tag).
---
--- The original code is being written XXX TODO document it.
 data Orbits = Orbits
   { inOrbit :: !Bool        -- True if enterOrbit, False if LeaveOrbit
   , basePos :: Position
