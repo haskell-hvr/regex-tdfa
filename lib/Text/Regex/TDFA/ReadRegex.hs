@@ -2,8 +2,8 @@
 -- Lazy\/Possessive\/Backrefs are not recognized.  Anchors \^ and \$ are
 -- recognized.
 --
--- The PGroup returned always have (Maybe GroupIndex) set to (Just _)
--- and never to Nothing.
+-- A 'PGroup' returned always has @(Maybe 'GroupIndex')@ set to @(Just _)@
+-- and never to @Nothing@.
 
 module Text.Regex.TDFA.ReadRegex (parseRegex) where
 
@@ -17,8 +17,13 @@ import Text.ParserCombinators.Parsec((<|>), (<?>),
 import Control.Monad(liftM, when, guard)
 import qualified Data.Set as Set(fromList)
 
--- | BracketElement is internal to this module
-data BracketElement = BEChar Char | BEChars String | BEColl String | BEEquiv String | BEClass String
+-- | An element inside @[...]@, denoting a character class.
+data BracketElement
+  = BEChar  Char    -- ^ A single character.
+  | BEChars String  -- ^ A sequence of characters expanded from a range (e.g. @a-z@).
+  | BEColl  String  -- ^ @foo@ in @[.foo.]@.
+  | BEEquiv String  -- ^ @bar@ in @[=bar=]@.
+  | BEClass String  -- ^ A POSIX character class (candidate), e.g. @alpha@ parsed from @[:alpha:]@.
 
 -- | Return either an error message or a tuple of the Pattern and the
 -- largest group index and the largest DoPa index (both have smallest
