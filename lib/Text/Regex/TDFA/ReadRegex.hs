@@ -1,10 +1,10 @@
-{-# OPTIONS_GHC -fno-warn-missing-signatures #-}
 -- | This is a POSIX version of parseRegex that allows NUL characters.
 -- Lazy\/Possessive\/Backrefs are not recognized.  Anchors \^ and \$ are
 -- recognized.
 --
 -- The PGroup returned always have (Maybe GroupIndex) set to (Just _)
 -- and never to Nothing.
+
 module Text.Regex.TDFA.ReadRegex (parseRegex) where
 
 {- By Chris Kuklewicz, 2007. BSD License, see the LICENSE file. -}
@@ -30,37 +30,46 @@ parseRegex x = runParser (do pat <- p_regex
                              (lastGroupIndex,lastDopa) <- getState
                              return (pat,(lastGroupIndex,DoPa lastDopa))) (0,0) x x
 
-p_regex :: CharParser (GroupIndex,Int) Pattern
+type P = CharParser (GroupIndex, Int)
+
+p_regex :: P Pattern
 p_regex = liftM POr $ sepBy1 p_branch (char '|')
 
 -- man re_format helps a lot, it says one-or-more pieces so this is
 -- many1 not many.  Use "()" to indicate an empty piece.
+p_branch :: P Pattern
 p_branch = liftM PConcat $ many1 p_piece
 
+p_piece :: P Pattern
 p_piece = (p_anchor <|> p_atom) >>= p_post_atom -- correct specification
 
+p_atom :: P Pattern
 p_atom =  p_group <|> p_bracket <|> p_char <?> "an atom"
 
-group_index :: CharParser (GroupIndex,Int) (Maybe GroupIndex)
+group_index :: P (Maybe GroupIndex)
 group_index = do
   (gi,ci) <- getState
   let index = succ gi
   setState (index,ci)
   return (Just index)
 
+p_group :: P Pattern
 p_group = lookAhead (char '(') >> do
   index <- group_index
   liftM (PGroup index) $ between (char '(') (char ')') p_regex
 
 -- p_post_atom takes the previous atom as a parameter
+p_post_atom :: Pattern -> P Pattern
 p_post_atom atom = (char '?' >> return (PQuest atom))
                <|> (char '+' >> return (PPlus atom))
                <|> (char '*' >> return (PStar True atom))
                <|> p_bound atom
                <|> return atom
 
+p_bound :: Pattern -> P Pattern
 p_bound atom = try $ between (char '{') (char '}') (p_bound_spec atom)
 
+p_bound_spec :: Pattern -> P Pattern
 p_bound_spec atom = do lowS <- many1 digit
                        let lowI = read lowS
                        highMI <- option (Just lowI) $ try $ do
@@ -76,6 +85,7 @@ p_bound_spec atom = do lowS <- many1 digit
                        return (PBound lowI highMI atom)
 
 -- An anchor cannot be modified by a repetition specifier
+p_anchor :: P Pattern
 p_anchor = (char '^' >> liftM PCarat char_index)
        <|> (char '$' >> liftM PDollar char_index)
        <|> try (do _ <- string "()"
@@ -83,11 +93,13 @@ p_anchor = (char '^' >> liftM PCarat char_index)
                    return $ PGroup index PEmpty)
        <?> "empty () or anchor ^ or $"
 
+char_index :: P DoPa
 char_index = do (gi,ci) <- getState
                 let ci' = succ ci
                 setState (gi,ci')
                 return (DoPa ci')
 
+p_char :: P Pattern
 p_char = p_dot <|> p_left_brace <|> p_escaped <|> p_other_char where
   p_dot = char '.' >> char_index >>= return . PDot
   p_left_brace = try $ (char '{' >> notFollowedBy digit >> char_index >>= return . (`PChar` '{'))
@@ -96,9 +108,10 @@ p_char = p_dot <|> p_left_brace <|> p_escaped <|> p_other_char where
     where specials  = "^.[$()|*+?{\\"
 
 -- parse [bar] and [^bar] sets of characters
+p_bracket :: P Pattern
 p_bracket = (char '[') >> ( (char '^' >> p_set True) <|> (p_set False) )
 
--- p_set :: Bool -> GenParser Char st Pattern
+p_set :: Bool -> P Pattern
 p_set invert = do initial <- (option "" ((char ']' >> return "]") <|> (char '-' >> return "-")))
                   values <- if null initial then many1 p_set_elem else many p_set_elem
                   _ <- char ']'
@@ -115,18 +128,23 @@ p_set invert = do initial <- (option "" ((char ']' >> return "]") <|> (char '-' 
 
 -- From here down the code is the parser and functions for pattern [ ] set things
 
+p_set_elem :: P BracketElement
 p_set_elem = p_set_elem_class <|> p_set_elem_equiv <|> p_set_elem_coll
          <|> p_set_elem_range <|> p_set_elem_char <?> "Failed to parse bracketed string"
 
+p_set_elem_class :: P BracketElement
 p_set_elem_class = liftM BEClass $
   try (between (string "[:") (string ":]") (many1 $ noneOf ":]"))
 
+p_set_elem_equiv :: P BracketElement
 p_set_elem_equiv = liftM BEEquiv $
   try (between (string "[=") (string "=]") (many1 $ noneOf "=]"))
 
+p_set_elem_coll :: P BracketElement
 p_set_elem_coll =  liftM BEColl $
   try (between (string "[.") (string ".]") (many1 $ noneOf ".]"))
 
+p_set_elem_range :: P BracketElement
 p_set_elem_range = try $ do
   start <- noneOf "]-"
   _  <- char '-'
@@ -136,6 +154,7 @@ p_set_elem_range = try $ do
     then return (BEChars [start..end])
     else unexpected "End point of dashed character range is less than starting point"
 
+p_set_elem_char :: P BracketElement
 p_set_elem_char = do
   c <- noneOf "]"
   when (c == '-') $ do
