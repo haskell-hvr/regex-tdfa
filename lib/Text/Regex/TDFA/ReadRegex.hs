@@ -14,16 +14,18 @@ import Text.ParserCombinators.Parsec((<|>), (<?>),
   unexpected, try, runParser, many, getState, setState, CharParser, ParseError,
   sepBy1, option, notFollowedBy, many1, lookAhead, eof, between,
   string, noneOf, digit, char, anyChar)
+
 import Control.Monad(liftM, when, guard)
+import Data.Foldable (asum)
 import qualified Data.Set as Set(fromList)
 
 -- | An element inside @[...]@, denoting a character class.
 data BracketElement
-  = BEChar  Char    -- ^ A single character.
-  | BEChars String  -- ^ A sequence of characters expanded from a range (e.g. @a-z@).
-  | BEColl  String  -- ^ @foo@ in @[.foo.]@.
-  | BEEquiv String  -- ^ @bar@ in @[=bar=]@.
-  | BEClass String  -- ^ A POSIX character class (candidate), e.g. @alpha@ parsed from @[:alpha:]@.
+  = BEChar  Char       -- ^ A single character.
+  | BERange Char Char  -- ^ A character range (e.g. @a-z@).
+  | BEColl  String     -- ^ @foo@ in @[.foo.]@.
+  | BEEquiv String     -- ^ @bar@ in @[=bar=]@.
+  | BEClass String     -- ^ A POSIX character class (candidate), e.g. @alpha@ parsed from @[:alpha:]@.
 
 -- | Return either an error message or a tuple of the Pattern and the
 -- largest group index and the largest DoPa index (both have smallest
@@ -121,9 +123,10 @@ p_set invert = do initial <- (option "" ((char ']' >> return "]") <|> (char '-' 
                   values <- if null initial then many1 p_set_elem else many p_set_elem
                   _ <- char ']'
                   ci <- char_index
-                  let chars = maybe'set $ initial
-                                          ++ [c | BEChar c <- values ]
-                                          ++ concat [s | BEChars s <- values ]
+                  let chars = maybe'set $ concat $
+                        initial :
+                        [ c | BEChar c <- values ] :
+                        [ [start..end] | BERange start end <- values ]
                       colls = maybe'set [PatternSetCollatingElement coll | BEColl coll <- values ]
                       equivs = maybe'set [PatternSetEquivalenceClass equiv | BEEquiv equiv <- values]
                       class's = maybe'set [PatternSetCharacterClass a'class | BEClass a'class <- values]
@@ -134,8 +137,14 @@ p_set invert = do initial <- (option "" ((char ']' >> return "]") <|> (char '-' 
 -- From here down the code is the parser and functions for pattern [ ] set things
 
 p_set_elem :: P BracketElement
-p_set_elem = p_set_elem_class <|> p_set_elem_equiv <|> p_set_elem_coll
-         <|> p_set_elem_range <|> p_set_elem_char <?> "Failed to parse bracketed string"
+p_set_elem = checkBracketElement =<< asum
+  [ p_set_elem_class
+  , p_set_elem_equiv
+  , p_set_elem_coll
+  , p_set_elem_range
+  , p_set_elem_char
+  , fail "Failed to parse bracketed string"
+  ]
 
 p_set_elem_class :: P BracketElement
 p_set_elem_class = liftM BEClass $
@@ -154,10 +163,7 @@ p_set_elem_range = try $ do
   start <- noneOf "]-"
   _  <- char '-'
   end <- noneOf "]"
-  -- bug fix: check start <= end before "return (BEChars [start..end])"
-  if start <= end
-    then return (BEChars [start..end])
-    else unexpected "End point of dashed character range is less than starting point"
+  return $ BERange start end
 
 p_set_elem_char :: P BracketElement
 p_set_elem_char = do
@@ -167,3 +173,23 @@ p_set_elem_char = do
     when (not atEnd) (unexpected "A dash is in the wrong place in a bracket")
   return (BEChar c)
 
+-- | Fail when 'BracketElement' is invalid, e.g. empty range @1-0@.
+-- This failure should not be caught.
+--
+checkBracketElement :: BracketElement -> P BracketElement
+checkBracketElement e =
+  case e of
+    BERange start end
+      | start > end -> fail $ unwords
+          [ "End point"
+          , show end
+          , "of dashed character range is less than starting point"
+          , show start
+          ]
+      | otherwise -> ok
+    BEChar  _ -> ok
+    BEClass _ -> ok
+    BEColl  _ -> ok
+    BEEquiv _ -> ok
+  where
+    ok = return e
