@@ -32,11 +32,17 @@ import "Text.Regex.TDFA"
 = Basics
 
 @
->>> let emailRegex = "[a-zA-Z0-9+.\\_-]+\\@[a-zA-Z-]+\\.[a-z]+"
->>> "my email is firstname-lastname_1974@e-mail.com" =~ emailRegex :: Bool
+>>> let emailRegex = "[a-zA-Z0-9+._-]+\\@[-a-zA-Z]+\\.[a-z]+"
+>>> "my email is first-name.lastname_1974@e-mail.com" =~ emailRegex :: Bool
 True
 
 >>> "invalid@mail@com" =~ emailRegex :: Bool
+False
+
+>>> "invalid@mail.COM" =~ emailRegex :: Bool
+False
+
+>>> "#@invalid.com" =~ emailRegex :: Bool
 False
 
 /-- non-monadic/
@@ -150,6 +156,12 @@ simply ignored and equivalence classes like [=a=] are converted to
 just [a].  The character classes like [:alnum:] are supported over
 ASCII only, valid classes are alnum, digit, punct, alpha, graph,
 space, blank, lower, upper, cntrl, print, xdigit, word.
+
+@
+>>> getAllTextMatches ("john anne yifan" =~ "[[:lower:]]+") :: [String]
+["john","anne","yifan"]
+
+@
 
 This package does not provide "basic" regular expressions.  This
 package does not provide back references inside regular expressions.
