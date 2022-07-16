@@ -11,11 +11,12 @@ module Text.Regex.TDFA.ReadRegex (parseRegex) where
 
 import Text.Regex.TDFA.Pattern {- all -}
 import Text.ParserCombinators.Parsec((<|>), (<?>),
-  unexpected, try, runParser, many, getState, setState, CharParser, ParseError,
+  try, runParser, many, getState, setState, CharParser, ParseError,
   sepBy1, option, notFollowedBy, many1, lookAhead, eof, between,
   string, noneOf, digit, char, anyChar)
 
-import Control.Monad(liftM, when, guard)
+import Control.Monad (liftM, guard)
+
 import Data.Foldable (asum)
 import qualified Data.Set as Set(fromList)
 
@@ -168,9 +169,6 @@ p_set_elem_range = try $ do
 p_set_elem_char :: P BracketElement
 p_set_elem_char = do
   c <- noneOf "]"
-  when (c == '-') $ do
-    atEnd <- (lookAhead (char ']') >> return True) <|> (return False)
-    when (not atEnd) (unexpected "A dash is in the wrong place in a bracket")
   return (BEChar c)
 
 -- | Fail when 'BracketElement' is invalid, e.g. empty range @1-0@.
