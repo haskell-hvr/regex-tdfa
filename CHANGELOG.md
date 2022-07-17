@@ -1,11 +1,22 @@
 For the package version policy (PVP), see  http://pvp.haskell.org/faq .
 
+### 1.3.1.4
+
+_2022-07-17, Andreas Abel_
+
+- Fix parsing of dashes in bracket expressions, e.g. `[-a-z]` ([#1](https://github.com/haskell-hvr/regex-tdfa/issues/1))
+- Fix a deprecation warning except for on GHC 8.2 ([#21](https://github.com/haskell-hvr/regex-tdfa/issues/21))
+- Documentation: link `defaultComptOpt` to its definition  ([#13](https://github.com/haskell-hvr/regex-tdfa/issues/13))
+- Verify documentation examples with new `doc-test` testsuite
+- Tested with GHC 7.4 - 9.4
+
 ### 1.3.1.3
 
 _2022-07-14, Andreas Abel_
 
 - Fix an `undefined` in `Show PatternSet` ([#37](https://github.com/haskell-hvr/regex-tdfa/issues/37))
-- Document POSIX character classes (e.g. `[[:digit:]]`)
+- Document POSIX character classes (e.g. `[[:digit:]]`) in README
+- Tested with GHC 7.4 - 9.4
 
 ### 1.3.1.2 Revision 1
 
