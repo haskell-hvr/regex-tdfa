@@ -49,6 +49,7 @@ import Data.Semigroup as Sem
 
 import Text.Regex.TDFA.Common {- all -}
 import Text.Regex.TDFA.Pattern(Pattern(..),starTrans)
+import Utils
 -- import Debug.Trace
 
 {- By Chris Kuklewicz, 2007. BSD License, see the LICENSE file. -}

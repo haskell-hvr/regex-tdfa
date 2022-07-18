@@ -56,11 +56,12 @@ import qualified Data.Set as S(Set,insert,toAscList,empty)
 import Text.Regex.TDFA.Common(QT(..),QNFA(..),QTrans,TagTask(..),TagUpdate(..),DoPa(..)
                              ,CompOption(..)
                              ,Tag,TagTasks,TagList,Index,WinTags,GroupIndex,GroupInfo(..)
-                             ,common_error,noWin,snd3,mapSnd)
+                             ,common_error,noWin)
 import Text.Regex.TDFA.CorePattern(Q(..),P(..),OP(..),WhichTest,cleanNullView,NullView
                                   ,SetTestInfo(..),Wanted(..),TestInfo
                                   ,mustAccept,cannotAccept,patternToQ)
 import Text.Regex.TDFA.Pattern(Pattern(..),PatternSet(..),unSEC,PatternSetCharacterClass(..))
+import Utils
 --import Debug.Trace
 
 ecart :: String -> a -> a

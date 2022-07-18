@@ -84,7 +84,8 @@ library
                         Text.Regex.TDFA.Text
                         Text.Regex.TDFA.Text.Lazy
 
-  other-modules:        Paths_regex_tdfa
+  other-modules:        Utils
+                        Paths_regex_tdfa
 
   -- Support Semigroup instances uniformly
   --
@@ -123,6 +124,7 @@ library
                         UnboxedTuples
                         UnliftedFFITypes
   other-extensions:     CPP
+                        RankNTypes
 
   ghc-options:          -Wall -funbox-strict-fields -fspec-constr-count=10 -fno-warn-orphans
 
