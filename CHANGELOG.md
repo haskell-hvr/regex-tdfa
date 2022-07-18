@@ -1,5 +1,14 @@
 For the package version policy (PVP), see  http://pvp.haskell.org/faq .
 
+### 1.3.1.5
+
+_2022-07-18, Andreas Abel_
+
+- Allow dash (`-`) as start of a range, e.g. `[--z]`
+  ([#1](https://github.com/haskell-hvr/regex-tdfa/issues/1),
+  [#45](https://github.com/haskell-hvr/regex-tdfa/pull/45))
+- Tested with GHC 7.4 - 9.4
+
 ### 1.3.1.4
 
 _2022-07-17, Andreas Abel_
