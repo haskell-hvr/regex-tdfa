@@ -1,6 +1,8 @@
 {-# LANGUAGE CPP #-}
 {-# LANGUAGE RankNTypes #-}
 
+{-# OPTIONS_GHC -fno-warn-name-shadowing #-}
+
 -- | Internal module for utilities used in the implementation.
 
 module Utils (module Utils, module X) where
@@ -41,24 +43,22 @@ over l f o = runIdentity $ l (Identity . f) o
 #endif
 
 -- | After 'sort' or 'sortBy' the use of 'nub' or 'nubBy' can be replaced by 'norep' or 'norepBy'.
-norep :: (Eq a) => [a]->[a]
-norep [] = []
-norep x@[_] = x
-norep (a:bs@(c:cs)) | a==c = norep (a:cs)
-                    | otherwise = a:norep bs
+norep :: Eq a => [a] -> [a]
+norep = norepBy (==)
 
 -- | After 'sort' or 'sortBy' the use of 'nub' or 'nubBy' can be replaced by 'norep' or 'norepBy'.
 norepBy :: (a -> a -> Bool) -> [a] -> [a]
-norepBy _ [] = []
-norepBy _ x@[_] = x
-norepBy eqF (a:bs@(c:cs)) | a `eqF` c = norepBy eqF (a:cs)
-                          | otherwise = a:norepBy eqF bs
+norepBy _  []     = []
+norepBy eq (a:as) = loop a as
+  where
+  loop a []     = [a]
+  loop a (b:bs) = (if a `eq` b then id else (a:)) $ loop b bs
 
-mapFst :: (Functor f) => (t -> t2) -> f (t, t1) -> f (t2, t1)
-mapFst f = fmap (\ (a,b) -> (f a,b))
+mapFst :: Functor f => (t1 -> t2) -> f (t1, t) -> f (t2, t)
+mapFst f = fmap $ \ (a, b) -> (f a, b)
 
-mapSnd :: (Functor f) => (t1 -> t2) -> f (t, t1) -> f (t, t2)
-mapSnd f = fmap (\ (a,b) -> (a,f b))
+mapSnd :: Functor f => (t1 -> t2) -> f (t, t1) -> f (t, t2)
+mapSnd f = fmap $ \ (a, b) -> (a, f b)
 
 fst3 :: (a,b,c) -> a
 fst3 (x,_,_) = x
