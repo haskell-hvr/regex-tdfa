@@ -120,7 +120,7 @@ p_bracket :: P Pattern
 p_bracket = (char '[') >> ( (char '^' >> p_set True) <|> (p_set False) )
 
 p_set :: Bool -> P Pattern
-p_set invert = do initial <- (option "" ((char ']' >> return "]") <|> (char '-' >> return "-")))
+p_set invert = do initial <- option "" (char ']' >> return "]")
                   values <- if null initial then many1 p_set_elem else many p_set_elem
                   _ <- char ']'
                   ci <- char_index
@@ -161,7 +161,7 @@ p_set_elem_coll =  liftM BEColl $
 
 p_set_elem_range :: P BracketElement
 p_set_elem_range = try $ do
-  start <- noneOf "]-"
+  start <- noneOf "]"
   _  <- char '-'
   end <- noneOf "]"
   return $ BERange start end

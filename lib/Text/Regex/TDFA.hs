@@ -124,6 +124,9 @@ a '=~' b :: (String, String, String, [String])
 >>> getAllTextMatches ("john anne yifan" =~ "[a-z]+") :: [String]
 ["john","anne","yifan"]
 
+>>> getAllTextMatches ("* - . a + z" =~ "[--z]+") :: [String]
+["-",".","a","z"]
+
 @
 
 = Feature support
