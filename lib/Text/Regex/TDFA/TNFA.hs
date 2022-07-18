@@ -29,8 +29,10 @@
 --
 -- Uses recursive do notation.
 
-module Text.Regex.TDFA.TNFA(patternToNFA
-                            ,QNFA(..),QT(..),QTrans,TagUpdate(..)) where
+module Text.Regex.TDFA.TNFA
+  ( patternToNFA
+  , QNFA(..), QT(..), QTrans, TagUpdate(..)
+  ) where
 
 {- By Chris Kuklewicz, 2007. BSD License, see the LICENSE file. -}
 
@@ -48,7 +50,7 @@ import Data.IntSet.EnumSet2(EnumSet)
 import qualified Data.IntSet.EnumSet2 as Set(singleton,toList,insert)
 import Data.Maybe(catMaybes,isNothing)
 import Data.Monoid as Mon(Monoid(..))
-import qualified Data.Set as S(Set,insert,toAscList,empty)
+import qualified Data.Set as S (insert, toAscList)
 
 import Text.Regex.TDFA.Common(QT(..),QNFA(..),QTrans,TagTask(..),TagUpdate(..),DoPa(..)
                              ,CompOption(..)
@@ -57,8 +59,7 @@ import Text.Regex.TDFA.Common(QT(..),QNFA(..),QTrans,TagTask(..),TagUpdate(..),D
 import Text.Regex.TDFA.CorePattern(Q(..),P(..),OP(..),WhichTest,cleanNullView,NullView
                                   ,SetTestInfo(..),Wanted(..),TestInfo
                                   ,mustAccept,cannotAccept,patternToQ)
-import Text.Regex.TDFA.Pattern(Pattern(..),PatternSet(..),unSEC,PatternSetCharacterClass(..))
---import Debug.Trace
+import Text.Regex.TDFA.Pattern (Pattern(..), decodePatternSet)
 
 ecart :: String -> a -> a
 ecart _ = id
@@ -783,44 +784,5 @@ qt_win seems to only allow PreUpdate so why keep the same type?
 
 
 ADD ORPHAN ID check and make this a fatal error while testing
-
--}
-
--- | decodePatternSet cannot handle collating element and treats
--- equivalence classes as just their definition and nothing more.
-decodePatternSet :: PatternSet -> S.Set Char
-decodePatternSet (PatternSet msc mscc _ msec) =
-  let baseMSC = maybe S.empty id msc
-      withMSCC = foldl (flip S.insert) baseMSC  (maybe [] (concatMap decodeCharacterClass . S.toAscList) mscc)
-      withMSEC = foldl (flip S.insert) withMSCC (maybe [] (concatMap unSEC . S.toAscList) msec)
-  in withMSEC
-
--- | This returns the distinct ascending list of characters
--- represented by [: :] values in legalCharacterClasses; unrecognized
--- class names return an empty string
-decodeCharacterClass :: PatternSetCharacterClass -> String
-decodeCharacterClass (PatternSetCharacterClass s) =
-  case s of
-    "alnum" -> ['0'..'9']++['a'..'z']++['A'..'Z']
-    "digit" -> ['0'..'9']
-    "punct" -> ['\33'..'\47']++['\58'..'\64']++['\91'..'\95']++"\96"++['\123'..'\126']
-    "alpha" -> ['a'..'z']++['A'..'Z']
-    "graph" -> ['\41'..'\126']
-    "space" -> "\t\n\v\f\r "
-    "blank" -> "\t "
-    "lower" -> ['a'..'z']
-    "upper" -> ['A'..'Z']
-    "cntrl" -> ['\0'..'\31']++"\127" -- with NUL
-    "print" -> ['\32'..'\126']
-    "xdigit" -> ['0'..'9']++['a'..'f']++['A'..'F']
-    "word" -> ['0'..'9']++['a'..'z']++['A'..'Z']++"_"
-    _ -> []
-
-{-
--- | This is the list of recognized [: :] character classes, others
--- are decoded as empty.
-legalCharacterClasses :: [String]
-legalCharacterClasses = ["alnum","digit","punct","alpha","graph"
-  ,"space","blank","lower","upper","cntrl","print","xdigit","word"]
 
 -}

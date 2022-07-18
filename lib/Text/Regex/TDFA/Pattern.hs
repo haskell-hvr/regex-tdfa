@@ -12,6 +12,7 @@ module Text.Regex.TDFA.Pattern
     ,PatternSetEquivalenceClass(..)
     ,GroupIndex
     ,DoPa(..)
+    ,decodeCharacterClass, decodePatternSet
     ,showPattern
 -- ** Internal use
     ,starTrans
@@ -22,8 +23,8 @@ module Text.Regex.TDFA.Pattern
 {- By Chris Kuklewicz, 2007. BSD License, see the LICENSE file. -}
 
 import Data.List(intersperse,partition)
-import qualified Data.Set as Set(toAscList,toList)
-import Data.Set(Set) -- XXX EnumSet
+import qualified Data.Set as Set
+import Data.Set (Set)
 import Text.Regex.TDFA.Common(DoPa(..),GroupIndex,common_error)
 
 err :: String -> a
@@ -130,6 +131,36 @@ instance Show PatternSetCollatingElement where
   showsPrec _ p = showChar '[' . showChar '.' . shows (unSCE p) . showChar '.' . showChar ']'
 instance Show PatternSetEquivalenceClass where
   showsPrec _ p = showChar '[' . showChar '=' . shows (unSEC p) . showChar '=' . showChar ']'
+
+-- | @decodePatternSet@ cannot handle collating element and treats
+-- equivalence classes as just their definition and nothing more.
+decodePatternSet :: PatternSet -> Set Char
+decodePatternSet (PatternSet msc mscc _ msec) =
+  let baseMSC = maybe Set.empty id msc
+      withMSCC = foldl (flip Set.insert) baseMSC  (maybe [] (concatMap decodeCharacterClass . Set.toAscList) mscc)
+      withMSEC = foldl (flip Set.insert) withMSCC (maybe [] (concatMap unSEC . Set.toAscList) msec)
+  in withMSEC
+
+-- | This returns the strictly ascending list of characters
+-- represented by @[: :]@ POSIX character classes.
+-- Unrecognized class names return an empty string.
+decodeCharacterClass :: PatternSetCharacterClass -> String
+decodeCharacterClass (PatternSetCharacterClass s) =
+  case s of
+    "alnum"  -> ['0'..'9']++['A'..'Z']++['a'..'z']
+    "digit"  -> ['0'..'9']
+    "punct"  -> ['\33'..'\47']++['\58'..'\64']++['\91'..'\96']++['\123'..'\126']
+    "alpha"  -> ['A'..'Z']++['a'..'z']
+    "graph"  -> ['\41'..'\126']
+    "space"  -> "\t\n\v\f\r "
+    "blank"  -> "\t "
+    "lower"  -> ['a'..'z']
+    "upper"  -> ['A'..'Z']
+    "cntrl"  -> ['\0'..'\31']++"\127" -- with NUL
+    "print"  -> ['\32'..'\126']
+    "xdigit" -> ['0'..'9']++['A'..'F']++['a'..'f']
+    "word"   -> ['0'..'9']++['A'..'Z']++"_"++['a'..'z']
+    _ -> []
 
 -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- ==
 
