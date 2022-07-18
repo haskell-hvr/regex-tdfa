@@ -29,8 +29,11 @@
 --
 -- Uses recursive do notation.
 
-module Text.Regex.TDFA.TNFA(patternToNFA
-                            ,QNFA(..),QT(..),QTrans,TagUpdate(..)) where
+module Text.Regex.TDFA.TNFA
+  ( patternToNFA
+  , decodeCharacterClass, decodePatternSet
+  , QNFA(..), QT(..), QTrans, TagUpdate(..)
+  ) where
 
 {- By Chris Kuklewicz, 2007. BSD License, see the LICENSE file. -}
 
@@ -786,7 +789,7 @@ ADD ORPHAN ID check and make this a fatal error while testing
 
 -}
 
--- | decodePatternSet cannot handle collating element and treats
+-- | @decodePatternSet@ cannot handle collating element and treats
 -- equivalence classes as just their definition and nothing more.
 decodePatternSet :: PatternSet -> S.Set Char
 decodePatternSet (PatternSet msc mscc _ msec) =
@@ -795,9 +798,9 @@ decodePatternSet (PatternSet msc mscc _ msec) =
       withMSEC = foldl (flip S.insert) withMSCC (maybe [] (concatMap unSEC . S.toAscList) msec)
   in withMSEC
 
--- | This returns the distinct ascending list of characters
--- represented by [: :] values in legalCharacterClasses; unrecognized
--- class names return an empty string
+-- | This returns the strictly ascending list of characters
+-- represented by @[: :]@ POSIX character classes.
+-- Unrecognized class names return an empty string.
 decodeCharacterClass :: PatternSetCharacterClass -> String
 decodeCharacterClass (PatternSetCharacterClass s) =
   case s of
