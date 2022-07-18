@@ -1,5 +1,14 @@
 For the package version policy (PVP), see  http://pvp.haskell.org/faq .
 
+### 1.3.2
+
+_2022-07-18, Andreas Abel_
+
+- Export `decodePatternSet` and `decodeCharacterClass` from `Text.Regex.TDFA.Pattern`
+  ([#16](https://github.com/haskell-hvr/regex-tdfa/issues/16))
+- Extend and correct docs for `Pattern` module
+- Tested with GHC 7.4 - 9.4
+
 ### 1.3.1.5
 
 _2022-07-18, Andreas Abel_

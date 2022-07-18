@@ -180,6 +180,8 @@ instance Show PatternSetEquivalenceClass where
 
 -- | @decodePatternSet@ cannot handle collating element and treats
 -- equivalence classes as just their definition and nothing more.
+--
+-- @since 1.3.2
 decodePatternSet :: PatternSet -> Set Char
 decodePatternSet (PatternSet msc mscc _ msec) =
   let baseMSC = maybe Set.empty id msc
@@ -190,6 +192,8 @@ decodePatternSet (PatternSet msc mscc _ msec) =
 -- | This returns the strictly ascending list of characters
 -- represented by @[: :]@ POSIX character classes.
 -- Unrecognized class names return an empty string.
+--
+-- @since 1.3.2
 decodeCharacterClass :: PatternSetCharacterClass -> String
 decodeCharacterClass (PatternSetCharacterClass s) =
   case s of

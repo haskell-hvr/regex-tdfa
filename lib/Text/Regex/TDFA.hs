@@ -21,7 +21,7 @@ OS's bugs.
 
 Declare a dependency on the @regex-tdfa@ library in your @.cabal@ file:
 
-> build-depends: regex-tdfa ^>= 1.3.1.1
+> build-depends: regex-tdfa ^>= 1.3.2
 
 In Haskell modules where you want to use regexes simply @import@ /this/ module:
 

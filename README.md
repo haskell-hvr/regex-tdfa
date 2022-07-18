@@ -11,7 +11,7 @@ The name "tdfa" stands for Tagged-DFA.
 [Declare a dependency](https://www.haskell.org/cabal/users-guide/developing-packages.html#pkg-field-build-depends) on the `regex-tdfa` library in your `.cabal` file:
 
 ```
-build-depends: regex-tdfa ^>= 1.3.1
+build-depends: regex-tdfa ^>= 1.3.2
 ```
 
 In Haskell modules where you need to use regexes `import` the respective `regex-tdfa` module:
