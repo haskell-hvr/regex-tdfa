@@ -5,19 +5,23 @@
 -- the parsed form of a regular expression.
 
 module Text.Regex.TDFA.Pattern
-    (Pattern(..)
-    ,PatternSet(..)
-    ,PatternSetCharacterClass(..)
-    ,PatternSetCollatingElement(..)
-    ,PatternSetEquivalenceClass(..)
-    ,GroupIndex
-    ,DoPa(..)
-    ,decodeCharacterClass, decodePatternSet
-    ,showPattern
--- ** Internal use
-    ,starTrans
--- ** Internal use, operations to support debugging under @ghci@
-    ,starTrans',simplify',dfsPattern
+    ( Pattern(..)
+    , PatternSet(..)
+    , patternSetChars
+    , patternSetCharacterClasses
+    , patternSetCollatingElements
+    , patternSetEquivalenceClasses
+    , PatternSetCharacterClass(..)
+    , PatternSetCollatingElement(..)
+    , PatternSetEquivalenceClass(..)
+    , GroupIndex
+    , DoPa(..)
+    , decodeCharacterClass, decodePatternSet
+    , showPattern
+      -- ** Internal use
+    , starTrans
+      -- ** Internal use, operations to support debugging under @ghci@
+    , starTrans', simplify', dfsPattern
     ) where
 
 {- By Chris Kuklewicz, 2007. BSD License, see the LICENSE file. -}
@@ -25,6 +29,8 @@ module Text.Regex.TDFA.Pattern
 import Data.List(intersperse,partition)
 import qualified Data.Set as Set
 import Data.Set (Set)
+
+import Utils
 import Text.Regex.TDFA.Common(DoPa(..),GroupIndex,common_error)
 
 err :: String -> a
@@ -128,20 +134,54 @@ showPattern pIn =
 -- collating elements (e.g. @[.ch.]@, unused), and
 -- equivalence classes (e.g. @[=a=]@, treated as characters).
 --
-data PatternSet = PatternSet (Maybe (Set Char))
-                             (Maybe (Set PatternSetCharacterClass))
-                             (Maybe (Set PatternSetCollatingElement))
-                             (Maybe (Set PatternSetEquivalenceClass))
-                             deriving (Eq)
+data PatternSet = PatternSet
+  { _patternSetChars              :: Set Char
+      -- ^ Characters included in the pattern.
+  , _patternSetCharacterClasses   :: Set PatternSetCharacterClass
+      -- ^ POSIX character classes included in the pattern.
+  , _patternSetCollatingElements  :: Set PatternSetCollatingElement
+      -- ^ Collating elements included in the pattern.
+  , _patternSetEquivalenceClasses :: Set PatternSetEquivalenceClass
+      -- ^ Equivalence classes included in the pattern.
+  }
+  deriving (Eq)
+
+instance Semigroup PatternSet where
+  PatternSet a b c d <> PatternSet a' b' c' d' =
+   PatternSet (a <> a') (b <> b') (c <> c') (d <> d')
+
+instance Monoid PatternSet where
+  mempty  = PatternSet mempty mempty mempty mempty
+  mappend = (<>)
+
+-- | Lens for '_patternSetChars'.
+patternSetChars :: Lens' PatternSet (Set Char)
+patternSetChars f ps =
+  f (_patternSetChars ps) <&> \ i -> ps{ _patternSetChars = i }
+
+-- | Lens for '_patternSetCharacterClasses'.
+patternSetCharacterClasses :: Lens' PatternSet (Set PatternSetCharacterClass)
+patternSetCharacterClasses f ps =
+  f (_patternSetCharacterClasses ps) <&> \ i -> ps{ _patternSetCharacterClasses = i }
+
+-- | Lens for '_patternSetCollatingElements'.
+patternSetCollatingElements :: Lens' PatternSet (Set PatternSetCollatingElement)
+patternSetCollatingElements f ps =
+  f (_patternSetCollatingElements ps) <&> \ i -> ps{ _patternSetCollatingElements = i }
+
+-- | Lens for '_patternSetEquivalenceClasses'.
+patternSetEquivalenceClasses :: Lens' PatternSet (Set PatternSetEquivalenceClass)
+patternSetEquivalenceClasses f ps =
+  f (_patternSetEquivalenceClasses ps) <&> \ i -> ps{ _patternSetEquivalenceClasses = i }
 
 -- | Hand-rolled implementation, giving textual rather than Haskell representation.
 instance Show PatternSet where
   showsPrec i (PatternSet s scc sce sec) =
-    let (special,normal) = maybe ("","") ((partition (`elem` "]-")) . Set.toAscList) s
+    let (special,normal) = partition (`elem` "]-") $ Set.toAscList s
         charSpec = (if ']' `elem` special then (']':) else id) (byRange normal)
-        scc' = maybe "" ((concatMap show) . Set.toList) scc
-        sce' = maybe "" ((concatMap show) . Set.toList) sce
-        sec' = maybe "" ((concatMap show) . Set.toList) sec
+        scc' = concatMap show $ Set.toList scc
+        sce' = concatMap show $ Set.toList sce
+        sec' = concatMap show $ Set.toList sec
     in shows charSpec
        . showsPrec i scc' . showsPrec i sce' . showsPrec i sec'
        . if '-' `elem` special then showChar '-' else id
@@ -183,11 +223,11 @@ instance Show PatternSetEquivalenceClass where
 --
 -- @since 1.3.2
 decodePatternSet :: PatternSet -> Set Char
-decodePatternSet (PatternSet msc mscc _ msec) =
-  let baseMSC = maybe Set.empty id msc
-      withMSCC = foldl (flip Set.insert) baseMSC  (maybe [] (concatMap decodeCharacterClass . Set.toAscList) mscc)
-      withMSEC = foldl (flip Set.insert) withMSCC (maybe [] (concatMap unSEC . Set.toAscList) msec)
-  in withMSEC
+decodePatternSet (PatternSet chars ccs _ eqcs) = Set.unions
+  [ chars
+  , foldMap (Set.fromList . decodeCharacterClass) ccs
+  , foldMap (Set.fromList . unSEC) eqcs
+  ]
 
 -- | This returns the strictly ascending list of characters
 -- represented by @[: :]@ POSIX character classes.
