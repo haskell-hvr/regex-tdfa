@@ -109,26 +109,26 @@ data ExecOption = ExecOption {
     captureGroups :: Bool    -- ^ True by default.  Set to False to improve speed (and space).
   } deriving (Read,Show)
 
--- | Used by implementation to name certain Postions during
--- matching. Identity of Position tag to set during a transition.
+-- | Used by implementation to name certain 'Postion's during
+-- matching. Identity of 'Position' tag to set during a transition.
 type Tag = Int
 
--- | Internal use to indicate type of tag and preference for larger or smaller Positions.
+-- | Internal use to indicate type of tag and preference for larger or smaller 'Position's.
 data OP = Maximize | Minimize | Orbit | Ignore deriving (Eq,Show)
 
 -- | Internal NFA node identity number.
 type Index = Int
 
--- | Internal DFA identity is this Set of NFA Index.
+-- | Internal DFA identity is this 'Set' of NFA 'Index'.
 type SetIndex = IntSet {- Index -}
 
 -- | Index into the text being searched.
 type Position = Int
 
--- | GroupIndex is for indexing submatches from capturing parenthesized groups ('PGroup' or 'Group').
+-- | 'GroupIndex' is for indexing submatches from capturing parenthesized groups ('PGroup' or 'Group').
 type GroupIndex = Int
 
--- | GroupInfo collects the parent and tag information for an instance of a group.
+-- | 'GroupInfo' collects the parent and tag information for an instance of a group.
 data GroupInfo = GroupInfo {
     thisIndex, parentIndex :: GroupIndex
   , startTag, stopTag, flagTag :: Tag

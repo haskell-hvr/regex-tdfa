@@ -2,7 +2,7 @@
 
 -- | This "Text.Regex.TDFA.Pattern" module provides the 'Pattern' data
 -- type and its subtypes.  This 'Pattern' type is used to represent
--- the parsed form of a Regular Expression.
+-- the parsed form of a regular expression.
 
 module Text.Regex.TDFA.Pattern
     (Pattern(..)
@@ -16,7 +16,7 @@ module Text.Regex.TDFA.Pattern
     ,showPattern
 -- ** Internal use
     ,starTrans
--- ** Internal use, Operations to support debugging under ghci
+-- ** Internal use, operations to support debugging under @ghci@
     ,starTrans',simplify',dfsPattern
     ) where
 
@@ -30,35 +30,64 @@ import Text.Regex.TDFA.Common(DoPa(..),GroupIndex,common_error)
 err :: String -> a
 err = common_error "Text.Regex.TDFA.Pattern"
 
--- | Pattern is the type returned by the regular expression parser.
--- This is consumed by the CorePattern module and the tender leaves
--- are nibbled by the TNFA module.
-data Pattern = PEmpty
-             | PGroup  (Maybe GroupIndex) Pattern -- Nothing to indicate non-matching PGroup (Nothing never used!)
-             | POr     [Pattern]                  -- flattened by starTrans
-             | PConcat [Pattern]                  -- flattened by starTrans
-             | PQuest  Pattern                    -- eliminated by starTrans
-             | PPlus   Pattern                    -- eliminated by starTrans
-             | PStar   Bool Pattern               -- True means mayFirstBeNull is True
-             | PBound  Int (Maybe Int) Pattern    -- eliminated by starTrans
-             -- The rest of these need an index of where in the regex string it is from
-             | PCarat  {getDoPa::DoPa}
-             | PDollar {getDoPa::DoPa}
-             -- The following test and accept a single character
-             | PDot    {getDoPa::DoPa}            -- Any character (newline?) at all
-             | PAny    {getDoPa::DoPa,getPatternSet::PatternSet} -- Square bracketed things
-             | PAnyNot {getDoPa::DoPa,getPatternSet::PatternSet} -- Inverted square bracketed things
-             | PEscape {getDoPa::DoPa,getPatternChar::Char}      -- Backslashed Character
-             | PChar   {getDoPa::DoPa,getPatternChar::Char}      -- Specific Character
-             -- The following are semantic tags created in starTrans, not the parser
-             | PNonCapture Pattern               -- introduced by starTrans
-             | PNonEmpty Pattern                 -- introduced by starTrans
-               deriving (Eq,Show)
+-- | 'Pattern' is the type returned by the regular expression parser 'parseRegex'.
+-- This is consumed by the "Text.Regex.TDFA.CorePattern" module and the tender leaves
+-- are nibbled by the "Text.Regex.TDFA.TNFA" module.
+--
+-- The 'DoPa' field is the index of the component in the regex string @r@.
+data Pattern
+  = PEmpty
+      -- ^ @()@, matches the empty string.
+  | PGroup  (Maybe GroupIndex) Pattern
+      -- ^ Group @(r)@.  @Nothing@ indicates non-matching 'PGroup'
+      -- (never produced by parser 'parseRegex').
+  | POr     [Pattern]
+      -- ^ Alternative @r|s@ (flattened by 'starTrans').
+  | PConcat [Pattern]
+      -- ^ Sequence @rs@ (flattened by 'starTrans').
+  | PQuest  Pattern
+      -- ^ Zero or one repetitions @r?@ (eliminated by 'starTrans').
+  | PPlus   Pattern
+      -- ^ One or more repetitions @r+@ (eliminated by 'starTrans').
+  | PStar   Bool Pattern
+      -- ^ Zero or more repetitions @r*@.
+      -- @True@ (default) means may accept the empty string on its first iteration.
+  | PBound  Int (Maybe Int) Pattern
+      -- ^ Given number or repetitions @r{n}@ or @r{n,m}@
+      -- (eliminated by 'starTrans').
 
--- | I have not been checking, but this should have the property that
--- parsing the resulting string should result in an identical Pattern.
--- This is not true if starTrans has created PNonCapture and PNonEmpty
--- values or a (PStar False).  The contents of a "[ ]" grouping are
+  -- The rest of these need an index of where in the regex string it is from
+  | PCarat  { getDoPa :: DoPa }
+      -- ^ @^@ matches beginning of input.
+  | PDollar { getDoPa :: DoPa }
+      -- ^ @$@ matches end of input.
+
+  -- The following test and accept a single character
+  | PDot    { getDoPa :: DoPa }
+      -- ^ @.@ matches any character.
+  | PAny    { getDoPa :: DoPa, getPatternSet :: PatternSet }
+      -- ^ Bracket expression @[...]@.
+  | PAnyNot { getDoPa :: DoPa, getPatternSet :: PatternSet }
+      -- ^ Inverted bracket expression @[^...]@.
+  | PEscape { getDoPa :: DoPa, getPatternChar :: Char }
+      -- ^ Backslashed character @\c@, may have special meaning.
+  | PChar   { getDoPa :: DoPa, getPatternChar :: Char }
+      -- ^ Single character, matches given character.
+
+  -- The following are semantic tags created in starTrans, not the parser
+  | PNonCapture Pattern
+     -- ^ Tag for internal use, introduced by 'starTrans'.
+  | PNonEmpty Pattern
+     -- ^ Tag for internal use, introduced by 'starTrans'.
+  deriving (Eq, Show)
+
+-- Andreas Abel, 2022-07-18, issue #47:
+-- The following claim is FALSE:
+--
+-- I have not been checking, but this should have the property that
+-- parsing the resulting string should result in an identical 'Pattern'.
+-- This is not true if 'starTrans' has created 'PNonCapture' and 'PNonEmpty'
+-- values or a @'PStar' False@.  The contents of a @[...]@ grouping are
 -- always shown in a sorted canonical order.
 showPattern :: Pattern -> String
 showPattern pIn =
@@ -93,12 +122,19 @@ showPattern pIn =
 -}
         paren s = ('(':s)++")"
 
+-- | Content of a bracket expression @[...]@ organized into
+-- characters,
+-- POSIX character classes (e.g. @[[:alnum:]]@),
+-- collating elements (e.g. @[.ch.]@, unused), and
+-- equivalence classes (e.g. @[=a=]@, treated as characters).
+--
 data PatternSet = PatternSet (Maybe (Set Char))
                              (Maybe (Set PatternSetCharacterClass))
                              (Maybe (Set PatternSetCollatingElement))
                              (Maybe (Set PatternSetEquivalenceClass))
                              deriving (Eq)
 
+-- | Hand-rolled implementation, giving textual rather than Haskell representation.
 instance Show PatternSet where
   showsPrec i (PatternSet s scc sce sec) =
     let (special,normal) = maybe ("","") ((partition (`elem` "]-")) . Set.toAscList) s
@@ -118,17 +154,27 @@ instance Show PatternSet where
           groupRange x n [] = if n <=3 then take n [x..]
                               else x:'-':(toEnum (pred n+fromEnum x)):[]
 
+-- | Content of @[: :]@, e.g. @"alnum"@ for @[:alnum:]@.
 newtype PatternSetCharacterClass   = PatternSetCharacterClass   {unSCC::String}
   deriving (Eq,Ord)
+
+-- | Content of @[. .]@, e.g. @"ch"@ for @[.ch.]@.
 newtype PatternSetCollatingElement = PatternSetCollatingElement {unSCE::String}
   deriving (Eq,Ord)
+
+-- | Content of @[= =]@, e.g. @"a"@ for @[=a=]@.
 newtype PatternSetEquivalenceClass = PatternSetEquivalenceClass {unSEC::String}
   deriving (Eq,Ord)
 
+-- | Hand-rolled implementation, giving textual rather than Haskell representation.
 instance Show PatternSetCharacterClass where
   showsPrec _ p = showChar '[' . showChar ':' . shows (unSCC p) . showChar ':' . showChar ']'
+
+-- | Hand-rolled implementation, giving textual rather than Haskell representation.
 instance Show PatternSetCollatingElement where
   showsPrec _ p = showChar '[' . showChar '.' . shows (unSCE p) . showChar '.' . showChar ']'
+
+-- | Hand-rolled implementation, giving textual rather than Haskell representation.
 instance Show PatternSetEquivalenceClass where
   showsPrec _ p = showChar '[' . showChar '=' . shows (unSEC p) . showChar '=' . showChar ']'
 
@@ -165,18 +211,18 @@ decodeCharacterClass (PatternSetCharacterClass s) =
 -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- ==
 
 -- | Do the transformation and simplification in a single traversal.
--- This removes the PPlus, PQuest, and PBound values, changing to POr
--- and PEmpty and PStar True\/False.  For some PBound values it adds
--- PNonEmpty and PNonCapture semantic marker.  It also simplifies to
--- flatten out nested POr and PConcat instances and eliminate some
--- unneeded PEmpty values.
+-- This removes the 'PPlus', 'PQuest', and 'PBound' values, changing to 'POr'
+-- and 'PEmpty' and 'PStar'.  For some 'PBound' values it adds
+-- 'PNonEmpty' and 'PNonCapture' semantic marker.  It also simplifies to
+-- flatten out nested 'POr' and 'PConcat' instances and eliminate some
+-- unneeded 'PEmpty' values.
 starTrans :: Pattern -> Pattern
 starTrans = dfsPattern (simplify' . starTrans')
 
--- | Apply a Pattern transformation function depth first
-dfsPattern :: (Pattern -> Pattern)  -- ^ The transformation function
-           -> Pattern               -- ^ The Pattern to transform
-           -> Pattern               -- ^ The transformed Pattern
+-- | Apply a 'Pattern' transformation function depth first.
+dfsPattern :: (Pattern -> Pattern)  -- ^ The transformation function.
+           -> Pattern               -- ^ The 'Pattern' to transform.
+           -> Pattern               -- ^ The transformed 'Pattern'.
 dfsPattern f = dfs
  where unary c = f . c . dfs
        dfs pattern = case pattern of
@@ -354,7 +400,7 @@ starTrans' pIn =
     pass = pIn
 
 -- | Function to transform a pattern into an equivalent, but less
--- redundant form.  Nested 'POr' and 'PConcat' are flattened. PEmpty
+-- redundant form.  Nested 'POr' and 'PConcat' are flattened. 'PEmpty'
 -- is propagated.
 simplify' :: Pattern -> Pattern
 simplify' x@(POr _) =
@@ -376,7 +422,7 @@ simplify' (PNonCapture PEmpty) = PEmpty -- 2009, perhaps useful
 --simplify' (PNonEmpty PEmpty) = err "simplify' (PNonEmpty PEmpty) = should be Impossible!" -- 2009
 simplify' other = other
 
--- | Function to flatten nested POr or nested PConcat applicataions.
+-- | Function to flatten nested 'POr' or nested 'PConcat' applicataions.
 flatten :: Pattern -> [Pattern]
 flatten (POr ps) = (concatMap (\x -> case x of
                                        POr ps' -> ps'
@@ -390,8 +436,8 @@ notPEmpty :: Pattern -> Bool
 notPEmpty PEmpty = False
 notPEmpty _      = True
 
--- | Determines if pIn will fail or accept [] and never accept any
--- characters. Treat PCarat and PDollar as True.
+-- | Determines if 'Pattern' will fail or accept @[]@ and never accept any
+-- characters. Treat 'PCarat' and 'PDollar' as @True@.
 canOnlyMatchNull :: Pattern -> Bool
 canOnlyMatchNull pIn =
   case pIn of
