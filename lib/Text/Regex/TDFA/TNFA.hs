@@ -51,7 +51,7 @@ import Data.IntSet.EnumSet2(EnumSet)
 import qualified Data.IntSet.EnumSet2 as Set(singleton,toList,insert)
 import Data.Maybe(catMaybes,isNothing)
 import Data.Monoid as Mon(Monoid(..))
-import qualified Data.Set as S(Set,insert,toAscList,empty)
+import qualified Data.Set as S
 
 import Text.Regex.TDFA.Common(QT(..),QNFA(..),QTrans,TagTask(..),TagUpdate(..),DoPa(..)
                              ,CompOption(..)
@@ -793,11 +793,11 @@ ADD ORPHAN ID check and make this a fatal error while testing
 -- | @decodePatternSet@ cannot handle collating element and treats
 -- equivalence classes as just their definition and nothing more.
 decodePatternSet :: PatternSet -> S.Set Char
-decodePatternSet (PatternSet msc mscc _ msec) =
-  let baseMSC = maybe S.empty id msc
-      withMSCC = foldl (flip S.insert) baseMSC  (maybe [] (concatMap decodeCharacterClass . S.toAscList) mscc)
-      withMSEC = foldl (flip S.insert) withMSCC (maybe [] (concatMap unSEC . S.toAscList) msec)
-  in withMSEC
+decodePatternSet (PatternSet chars ccs _ eqcs) = S.unions
+  [ chars
+  , foldMap (S.fromList . decodeCharacterClass) ccs
+  , foldMap (S.fromList . unSEC) eqcs
+  ]
 
 -- | This returns the strictly ascending list of characters
 -- represented by @[: :]@ POSIX character classes.

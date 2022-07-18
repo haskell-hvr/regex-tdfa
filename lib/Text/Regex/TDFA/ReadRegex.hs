@@ -14,11 +14,12 @@ import Text.ParserCombinators.Parsec((<|>), (<?>),
   try, runParser, many, getState, setState, CharParser, ParseError,
   sepBy1, option, notFollowedBy, many1, lookAhead, eof, between,
   string, noneOf, digit, char, anyChar)
+import Utils
 
 import Control.Monad (liftM, guard)
 
-import Data.Foldable (asum)
-import qualified Data.Set as Set(fromList)
+import Data.Foldable (asum, foldl')
+import qualified Data.Set as Set
 
 -- | An element inside @[...]@, denoting a character class.
 data BracketElement
@@ -132,20 +133,31 @@ p_bracket :: P Pattern
 p_bracket = (char '[') >> ( (char '^' >> p_set True) <|> (p_set False) )
 
 p_set :: Bool -> P Pattern
-p_set invert = do initial <- option "" (char ']' >> return "]")
-                  values <- if null initial then many1 p_set_elem else many p_set_elem
-                  _ <- char ']'
-                  ci <- char_index
-                  let chars = maybe'set $ concat $
-                        initial :
-                        [ c | BEChar c <- values ] :
-                        [ [start..end] | BERange start end <- values ]
-                      colls = maybe'set [PatternSetCollatingElement coll | BEColl coll <- values ]
-                      equivs = maybe'set [PatternSetEquivalenceClass equiv | BEEquiv equiv <- values]
-                      class's = maybe'set [PatternSetCharacterClass a'class | BEClass a'class <- values]
-                      maybe'set x = if null x then Nothing else Just (Set.fromList x)
-                      sets = PatternSet chars class's colls equivs
-                  sets `seq` return $ if invert then PAnyNot ci sets else PAny ci sets
+p_set invert = do
+  -- A ] as first character after the opening [ is treated as alternative ']'
+  -- rather than the closing bracket.
+  initial <- option mempty $ Set.singleton <$> char ']'
+  -- Parse remaining content of bracket expression.
+  values  <- if Set.null initial then many1 p_set_elem else many p_set_elem
+  _       <- char ']'
+  ci      <- char_index
+  -- Process the content of bracket expression into a PatternSet.
+  let !sets = foldl' (flip addBracketElement) (mempty{ _patternSetChars = initial }) values
+  return $ if invert then PAnyNot ci sets else PAny ci sets
+
+addBracketElement :: BracketElement -> PatternSet -> PatternSet
+addBracketElement = \case
+  BEChar  c         ->
+    over patternSetChars $ Set.insert c
+  BERange start end ->
+    over patternSetChars $ (`Set.union` Set.fromDistinctAscList [start..end])
+      -- Set.union is left-biased, [start..end] is considered the smaller set
+  BEClass s ->
+    over patternSetCharacterClasses $ Set.insert $ PatternSetCharacterClass s
+  BEColl  s ->
+    over patternSetCollatingElements $ Set.insert $ PatternSetCollatingElement s
+  BEEquiv s ->
+    over patternSetEquivalenceClasses $ Set.insert $ PatternSetEquivalenceClass s
 
 -- From here down the code is the parser and functions for pattern [ ] set things
 

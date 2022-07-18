@@ -5,18 +5,22 @@
 -- the parsed form of a Regular Expression.
 
 module Text.Regex.TDFA.Pattern
-    (Pattern(..)
-    ,PatternSet(..)
-    ,PatternSetCharacterClass(..)
-    ,PatternSetCollatingElement(..)
-    ,PatternSetEquivalenceClass(..)
-    ,GroupIndex
-    ,DoPa(..)
-    ,showPattern
--- ** Internal use
-    ,starTrans
--- ** Internal use, Operations to support debugging under ghci
-    ,starTrans',simplify',dfsPattern
+    ( Pattern(..)
+    , PatternSet(..)
+    , patternSetChars
+    , patternSetCharacterClasses
+    , patternSetCollatingElements
+    , patternSetEquivalenceClasses
+    , PatternSetCharacterClass(..)
+    , PatternSetCollatingElement(..)
+    , PatternSetEquivalenceClass(..)
+    , GroupIndex
+    , DoPa(..)
+    , showPattern
+      -- ** Internal use
+    , starTrans
+      -- ** Internal use, Operations to support debugging under ghci
+    , starTrans', simplify', dfsPattern
     ) where
 
 {- By Chris Kuklewicz, 2007. BSD License, see the LICENSE file. -}
@@ -24,6 +28,8 @@ module Text.Regex.TDFA.Pattern
 import Data.List(intersperse,partition)
 import qualified Data.Set as Set(toAscList,toList)
 import Data.Set(Set) -- XXX EnumSet
+
+import Utils
 import Text.Regex.TDFA.Common(DoPa(..),GroupIndex,common_error)
 
 err :: String -> a
@@ -92,19 +98,54 @@ showPattern pIn =
 -}
         paren s = ('(':s)++")"
 
-data PatternSet = PatternSet (Maybe (Set Char))
-                             (Maybe (Set PatternSetCharacterClass))
-                             (Maybe (Set PatternSetCollatingElement))
-                             (Maybe (Set PatternSetEquivalenceClass))
-                             deriving (Eq)
+-- | Processed content of a bracket expression.
+data PatternSet = PatternSet
+  { _patternSetChars              :: Set Char
+      -- ^ Characters included in the pattern.
+  , _patternSetCharacterClasses   :: Set PatternSetCharacterClass
+      -- ^ POSIX character classes included in the pattern.
+  , _patternSetCollatingElements  :: Set PatternSetCollatingElement
+      -- ^ Collating elements included in the pattern.
+  , _patternSetEquivalenceClasses :: Set PatternSetEquivalenceClass
+      -- ^ Equivalence classes included in the pattern.
+  }
+  deriving (Eq)
+
+instance Semigroup PatternSet where
+  PatternSet a b c d <> PatternSet a' b' c' d' =
+   PatternSet (a <> a') (b <> b') (c <> c') (d <> d')
+
+instance Monoid PatternSet where
+  mempty  = PatternSet mempty mempty mempty mempty
+  mappend = (<>)
+
+-- | Lens for '_patternSetChars'.
+patternSetChars :: Lens' PatternSet (Set Char)
+patternSetChars f ps =
+  f (_patternSetChars ps) <&> \ i -> ps{ _patternSetChars = i }
+
+-- | Lens for '_patternSetCharacterClasses'.
+patternSetCharacterClasses :: Lens' PatternSet (Set PatternSetCharacterClass)
+patternSetCharacterClasses f ps =
+  f (_patternSetCharacterClasses ps) <&> \ i -> ps{ _patternSetCharacterClasses = i }
+
+-- | Lens for '_patternSetCollatingElements'.
+patternSetCollatingElements :: Lens' PatternSet (Set PatternSetCollatingElement)
+patternSetCollatingElements f ps =
+  f (_patternSetCollatingElements ps) <&> \ i -> ps{ _patternSetCollatingElements = i }
+
+-- | Lens for '_patternSetEquivalenceClasses'.
+patternSetEquivalenceClasses :: Lens' PatternSet (Set PatternSetEquivalenceClass)
+patternSetEquivalenceClasses f ps =
+  f (_patternSetEquivalenceClasses ps) <&> \ i -> ps{ _patternSetEquivalenceClasses = i }
 
 instance Show PatternSet where
   showsPrec i (PatternSet s scc sce sec) =
-    let (special,normal) = maybe ("","") ((partition (`elem` "]-")) . Set.toAscList) s
+    let (special,normal) = partition (`elem` "]-") $ Set.toAscList s
         charSpec = (if ']' `elem` special then (']':) else id) (byRange normal)
-        scc' = maybe "" ((concatMap show) . Set.toList) scc
-        sce' = maybe "" ((concatMap show) . Set.toList) sce
-        sec' = maybe "" ((concatMap show) . Set.toList) sec
+        scc' = concatMap show $ Set.toList scc
+        sce' = concatMap show $ Set.toList sce
+        sec' = concatMap show $ Set.toList sec
     in shows charSpec
        . showsPrec i scc' . showsPrec i sce' . showsPrec i sec'
        . if '-' `elem` special then showChar '-' else id
