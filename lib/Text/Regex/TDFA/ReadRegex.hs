@@ -41,12 +41,12 @@ parseRegex x = runParser (do pat <- p_regex
 type P = CharParser (GroupIndex, Int)
 
 p_regex :: P Pattern
-p_regex = liftM POr $ sepBy1 p_branch (char '|')
+p_regex = POr <$> sepBy1 p_branch (char '|')
 
 -- man re_format helps a lot, it says one-or-more pieces so this is
 -- many1 not many.  Use "()" to indicate an empty piece.
 p_branch :: P Pattern
-p_branch = liftM PConcat $ many1 p_piece
+p_branch = PConcat <$> many1 p_piece
 
 p_piece :: P Pattern
 p_piece = (p_anchor <|> p_atom) >>= p_post_atom -- correct specification
@@ -62,15 +62,15 @@ group_index = do
   return (Just index)
 
 p_group :: P Pattern
-p_group = lookAhead (char '(') >> do
-  index <- group_index
-  liftM (PGroup index) $ between (char '(') (char ')') p_regex
+p_group = do
+  _ <- lookAhead (char '(')
+  PGroup <$> group_index <*> between (char '(') (char ')') p_regex
 
 -- p_post_atom takes the previous atom as a parameter
 p_post_atom :: Pattern -> P Pattern
-p_post_atom atom = (char '?' >> return (PQuest atom))
-               <|> (char '+' >> return (PPlus atom))
-               <|> (char '*' >> return (PStar True atom))
+p_post_atom atom = (char '?' $> PQuest atom)
+               <|> (char '+' $> PPlus atom)
+               <|> (char '*' $> PStar True atom)
                <|> p_bound atom
                <|> return atom
 
@@ -78,19 +78,20 @@ p_bound :: Pattern -> P Pattern
 p_bound atom = try $ between (char '{') (char '}') (p_bound_spec atom)
 
 p_bound_spec :: Pattern -> P Pattern
-p_bound_spec atom = do lowS <- many1 digit
-                       let lowI = read lowS
-                       highMI <- option (Just lowI) $ try $ do
-                                   _ <- char ','
-  -- parsec note: if 'many digits' fails below then the 'try' ensures
-  -- that the ',' will not match the closing '}' in p_bound, same goes
-  -- for any non '}' garbage after the 'many digits'.
-                                   highS <- many digit
-                                   if null highS then return Nothing -- no upper bound
-                                     else do let highI = read highS
-                                             guard (lowI <= highI)
-                                             return (Just (read highS))
-                       return (PBound lowI highMI atom)
+p_bound_spec atom = do
+  lowI <- read <$> many1 digit
+  highMI <- option (Just lowI) $ try $ do
+    _ <- char ','
+    -- parsec note: if 'many digits' fails below then the 'try' ensures
+    -- that the ',' will not match the closing '}' in p_bound, same goes
+    -- for any non '}' garbage after the 'many digits'.
+    highS <- many digit
+    if null highS then return Nothing -- no upper bound
+    else do
+      let highI = read highS
+      guard (lowI <= highI)
+      return $ Just highI
+  return $ PBound lowI highMI atom
 
 -- An anchor cannot be modified by a repetition specifier
 p_anchor :: P Pattern
@@ -102,18 +103,29 @@ p_anchor = (char '^' >> liftM PCarat char_index)
        <?> "empty () or anchor ^ or $"
 
 char_index :: P DoPa
-char_index = do (gi,ci) <- getState
-                let ci' = succ ci
-                setState (gi,ci')
-                return (DoPa ci')
+char_index = do
+  (gi, ci) <- getState
+  let ci' = succ ci
+  setState (gi, ci')
+  return $ DoPa ci'
 
 p_char :: P Pattern
-p_char = p_dot <|> p_left_brace <|> p_escaped <|> p_other_char where
-  p_dot = char '.' >> char_index >>= return . PDot
-  p_left_brace = try $ (char '{' >> notFollowedBy digit >> char_index >>= return . (`PChar` '{'))
-  p_escaped = char '\\' >> anyChar >>= \c -> char_index >>= return . (`PEscape` c)
-  p_other_char = noneOf specials >>= \c -> char_index >>= return . (`PChar` c)
-    where specials  = "^.[$()|*+?{\\"
+p_char = p_dot <|> p_left_brace <|> p_escaped <|> p_other_char
+  where
+  p_dot = do
+    _ <- char '.'
+    PDot <$> char_index
+
+  p_left_brace = try $ do
+    _ <- char '{'
+    _ <- notFollowedBy digit
+    flip PChar '{' <$> char_index
+
+  p_escaped = do
+    _ <- char '\\'
+    flip PEscape <$> anyChar <*> char_index
+
+  p_other_char = flip PChar <$> noneOf "^.[$()|*+?{\\" <*> char_index
 
 -- parse [bar] and [^bar] sets of characters
 p_bracket :: P Pattern
@@ -161,15 +173,13 @@ p_set_elem_coll =  liftM BEColl $
 
 p_set_elem_range :: P BracketElement
 p_set_elem_range = try $ do
-  start <- noneOf "]"
-  _  <- char '-'
-  end <- noneOf "]"
+  start <- noneOf "]-"
+  _     <- char '-'
+  end   <- noneOf "]"
   return $ BERange start end
 
 p_set_elem_char :: P BracketElement
-p_set_elem_char = do
-  c <- noneOf "]"
-  return (BEChar c)
+p_set_elem_char = BEChar <$> noneOf "]"
 
 -- | Fail when 'BracketElement' is invalid, e.g. empty range @1-0@.
 -- This failure should not be caught.
