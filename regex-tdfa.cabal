@@ -84,7 +84,8 @@ library
                         Text.Regex.TDFA.Text
                         Text.Regex.TDFA.Text.Lazy
 
-  other-modules:        Paths_regex_tdfa
+  other-modules:        Utils
+                        Paths_regex_tdfa
 
   -- Support Semigroup instances uniformly
   --
@@ -105,6 +106,8 @@ library
                       , parsec             == 3.1.*
                       , regex-base         == 0.94.*
                       , text               >= 1.2.3  && < 2.1
+                      , transformers       >= 0.2.2.1 && < 0.7
+                          -- For Control.Monad.Identity across GHC versions
 
   default-language:     Haskell2010
   default-extensions:   BangPatterns
@@ -123,6 +126,7 @@ library
                         UnboxedTuples
                         UnliftedFFITypes
   other-extensions:     CPP
+                        RankNTypes
 
   ghc-options:          -Wall -funbox-strict-fields -fspec-constr-count=10 -fno-warn-orphans
 
