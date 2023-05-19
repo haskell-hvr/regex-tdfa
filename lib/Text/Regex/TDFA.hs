@@ -31,7 +31,6 @@ import "Text.Regex.TDFA"
 
 = Basics
 
-@
 >>> let emailRegex = "[a-zA-Z0-9+._-]+\\@[-a-zA-Z]+\\.[a-z]+"
 >>> "my email is first-name.lastname_1974@e-mail.com" =~ emailRegex :: Bool
 True
@@ -45,6 +44,7 @@ False
 >>> "#@invalid.com" =~ emailRegex :: Bool
 False
 
+@
 /-- non-monadic/
 λ> \<to-match-against\> '=~' \<regex\>
 
@@ -69,6 +69,7 @@ type you want, especially if you're trying things out at the REPL.
 @
 /-- returns empty string if no match/
 a '=~' b :: String  /-- or ByteString, or Text.../
+@
 
 >>> "alexis-de-tocqueville" =~ "[a-z]+" :: String
 "alexis"
@@ -76,17 +77,14 @@ a '=~' b :: String  /-- or ByteString, or Text.../
 >>> "alexis-de-tocqueville" =~ "[0-9]+" :: String
 ""
 
-@
-
 == Check if it matched at all
 
 @
 a '=~' b :: Bool
+@
 
 >>> "alexis-de-tocqueville" =~ "[a-z]+" :: Bool
 True
-
-@
 
 == Get first match + text before/after
 
@@ -94,6 +92,7 @@ True
 /-- if no match, will just return whole/
 /-- string in the first element of the tuple/
 a =~ b :: (String, String, String)
+@
 
 >>> "alexis-de-tocqueville" =~ "de" :: (String, String, String)
 ("alexis-","de","-tocqueville")
@@ -101,33 +100,29 @@ a =~ b :: (String, String, String)
 >>> "alexis-de-tocqueville" =~ "kant" :: (String, String, String)
 ("alexis-de-tocqueville","","")
 
-@
-
 == Get first match + submatches
 
 @
 /-- same as above, but also returns a list of just submatches./
 /-- submatch list is empty if regex doesn't match at all/
 a '=~' b :: (String, String, String, [String])
+@
 
 >>> "div[attr=1234]" =~ "div\\[([a-z]+)=([^]]+)\\]" :: (String, String, String, [String])
 ("","div[attr=1234]","",["attr","1234"])
-
-@
 
 == Get /all/ matches
 
 @
 /-- can also return Data.Array instead of List/
 'getAllTextMatches' (a '=~' b) :: [String]
+@
 
 >>> getAllTextMatches ("john anne yifan" =~ "[a-z]+") :: [String]
 ["john","anne","yifan"]
 
 >>> getAllTextMatches ("* - . a + z" =~ "[--z]+") :: [String]
 ["-",".","a","z"]
-
-@
 
 = Feature support
 
@@ -160,11 +155,9 @@ just [a].  The character classes like [:alnum:] are supported over
 ASCII only, valid classes are alnum, digit, punct, alpha, graph,
 space, blank, lower, upper, cntrl, print, xdigit, word.
 
-@
 >>> getAllTextMatches ("john anne yifan" =~ "[[:lower:]]+") :: [String]
 ["john","anne","yifan"]
 
-@
 
 This package does not provide "basic" regular expressions.  This
 package does not provide back references inside regular expressions.
