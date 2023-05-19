@@ -7,5 +7,4 @@ constraint-set mtl-2.3
   constraints: mtl >= 2.3, transformers >= 0.6
 
 -- doctest-parallel requires base >= 4.10
--- and does not support GHC 9.6 as of 2023-02-18
-tests: >= 8.2 && < 9.6
+tests: >= 8.2
