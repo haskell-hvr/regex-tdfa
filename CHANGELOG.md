@@ -1,6 +1,14 @@
 For the package version policy (PVP), see  http://pvp.haskell.org/faq .
 
-### 1.3.2
+### 1.3.2.1
+
+_2023-05-19, Andreas Abel_
+
+- Fix haddock rendering of code examples in top-level documentation
+  ([#50](https://github.com/haskell-hvr/regex-tdfa/issues/50))
+- Tested with GHC 7.4 - 9.6
+
+## 1.3.2
 
 _2022-07-18, Andreas Abel_
 
