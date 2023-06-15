@@ -39,6 +39,7 @@ import Data.Sequence(Seq,ViewL(..),viewl)
 import qualified Data.Sequence as Seq(null)
 import qualified Data.ByteString.Char8 as SBS(ByteString)
 import qualified Data.ByteString.Lazy.Char8 as LBS(ByteString)
+import Foreign.Ptr(Ptr)
 
 import Text.Regex.Base(MatchArray,MatchOffset,MatchLength)
 import Text.Regex.TDFA.Common hiding (indent)
@@ -602,7 +603,7 @@ updateCopy ((_i1,instructions),oldPos,newOrbit) preTag s2 i2 = do
 
 -- #ifdef __GLASGOW_HASKELL__
 foreign import ccall unsafe "memcpy"
-    memcpy :: MutableByteArray# RealWorld -> MutableByteArray# RealWorld -> Int# -> IO ()
+    memcpy :: MutableByteArray# RealWorld -> MutableByteArray# RealWorld -> Int# -> IO (Ptr a)
 
 {-
 Prelude Data.Array.Base> :i STUArray
@@ -619,7 +620,7 @@ copySTU _source@(STUArray _ _ _ msource) _destination@(STUArray _ _ _ mdest) =
 --  when (b1/=b2) (error ("\n\nWTF copySTU: "++show (b1,b2)))
   ST $ \s1# ->
     case sizeofMutableByteArray# msource        of { n# ->
-    case unsafeCoerce# memcpy mdest msource n# s1# of { (# s2#, () #) ->
+    case unsafeCoerce# memcpy mdest msource n# s1# of { (# s2#, _ #) ->
     (# s2#, () #) }}
 {-
 -- #else /* !__GLASGOW_HASKELL__ */
