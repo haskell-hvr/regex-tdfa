@@ -28,6 +28,7 @@ import qualified Text.Regex.TDFA.IntArrTrieSet as Trie(lookupAsc,fromSinglesMerg
 import Text.Regex.TDFA.Pattern(Pattern)
 --import Text.Regex.TDFA.RunMutState(toInstructions)
 import Text.Regex.TDFA.TNFA(patternToNFA)
+import Utils
 --import Debug.Trace
 
 {- By Chris Kuklewicz, 2007. BSD License, see the LICENSE file. -}
