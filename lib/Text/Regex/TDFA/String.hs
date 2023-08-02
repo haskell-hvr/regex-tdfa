@@ -58,13 +58,11 @@ execute r s = Right (matchOnce r s)
 regexec :: Regex      -- ^ Compiled regular expression
         -> String     -- ^ String to match against
         -> Either String (Maybe (String, String, String, [String]))
-regexec r s =
-  case matchOnceText r s of
-    Nothing -> Right Nothing
-    Just (pre,mt,post) ->
-      let main = fst (mt!0)
-          rest = map fst (tail (elems mt)) -- will be []
-      in Right (Just (pre,main,post,rest))
+regexec r txt = Right $
+  case matchOnceText r txt of
+    Just (pre, mt, post) | main:rest <- map fst (elems mt)
+      -> Just (pre, main, post, rest)
+    _ -> Nothing
 
 -- Minimal definition for now
 instance RegexLike Regex String where

@@ -83,19 +83,17 @@ compile compOpt execOpt txt =
     Right pattern -> Right (patternToRegex pattern compOpt execOpt)
 
 -- | @since 1.3.1
-execute :: Regex      -- ^ Compiled regular expression
+execute :: Regex  -- ^ Compiled regular expression
         -> T.Text -- ^ Text to match against
         -> Either String (Maybe MatchArray)
 execute r txt = Right (matchOnce r txt)
 
 -- | @since 1.3.1
-regexec :: Regex      -- ^ Compiled regular expression
+regexec :: Regex  -- ^ Compiled regular expression
         -> T.Text -- ^ Text to match against
         -> Either String (Maybe (T.Text, T.Text, T.Text, [T.Text]))
-regexec r txt =
+regexec r txt = Right $
   case matchOnceText r txt of
-    Nothing -> Right (Nothing)
-    Just (pre,mt,post) ->
-      let main = fst (mt!0)
-          rest = map fst (tail (elems mt)) -- will be []
-      in Right (Just (pre,main,post,rest))
+    Just (pre, mt, post) | main:rest <- map fst (elems mt)
+      -> Just (pre, main, post, rest)
+    _ -> Nothing

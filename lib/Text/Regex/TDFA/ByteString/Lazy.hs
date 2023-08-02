@@ -79,18 +79,16 @@ compile compOpt execOpt bs =
     Left err -> Left ("parseRegex for Text.Regex.TDFA.ByteString failed:"++show err)
     Right pattern -> Right (patternToRegex pattern compOpt execOpt)
 
-execute :: Regex      -- ^ Compiled regular expression
+execute :: Regex        -- ^ Compiled regular expression
         -> L.ByteString -- ^ ByteString to match against
         -> Either String (Maybe MatchArray)
 execute r bs = Right (matchOnce r bs)
 
-regexec :: Regex      -- ^ Compiled regular expression
+regexec :: Regex        -- ^ Compiled regular expression
         -> L.ByteString -- ^ ByteString to match against
         -> Either String (Maybe (L.ByteString, L.ByteString, L.ByteString, [L.ByteString]))
-regexec r bs =
-  case matchOnceText r bs of
-    Nothing -> Right (Nothing)
-    Just (pre,mt,post) ->
-      let main = fst (mt!0)
-          rest = map fst (tail (elems mt)) -- will be []
-      in Right (Just (pre,main,post,rest))
+regexec r txt = Right $
+  case matchOnceText r txt of
+    Just (pre, mt, post) | main:rest <- map fst (elems mt)
+      -> Just (pre, main, post, rest)
+    _ -> Nothing

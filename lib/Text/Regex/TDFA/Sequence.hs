@@ -61,25 +61,23 @@ instance RegexLike Regex (Seq Char) where
 
 compile :: CompOption -- ^ Flags (summed together)
         -> ExecOption -- ^ Flags (summed together)
-        -> (Seq Char) -- ^ The regular expression to compile
+        -> Seq Char   -- ^ The regular expression to compile
         -> Either String Regex -- ^ Returns: the compiled regular expression
 compile compOpt execOpt bs =
   case parseRegex (F.toList bs) of
     Left err -> Left ("parseRegex for Text.Regex.TDFA.Sequence failed:"++show err)
     Right pattern -> Right (patternToRegex pattern compOpt execOpt)
 
-execute :: Regex      -- ^ Compiled regular expression
-        -> (Seq Char) -- ^ ByteString to match against
+execute :: Regex    -- ^ Compiled regular expression
+        -> Seq Char -- ^ String to match against
         -> Either String (Maybe MatchArray)
 execute r bs = Right (matchOnce r bs)
 
-regexec :: Regex      -- ^ Compiled regular expression
-        -> (Seq Char) -- ^ ByteString to match against
-        -> Either String (Maybe ((Seq Char), (Seq Char), (Seq Char), [(Seq Char)]))
-regexec r bs =
-  case matchOnceText r bs of
-    Nothing -> Right (Nothing)
-    Just (pre,mt,post) ->
-      let main = fst (mt!0)
-          rest = map fst (tail (elems mt)) -- will be []
-      in Right (Just (pre,main,post,rest))
+regexec :: Regex    -- ^ Compiled regular expression
+        -> Seq Char -- ^ String to match against
+        -> Either String (Maybe (Seq Char, Seq Char, Seq Char, [Seq Char]))
+regexec r txt = Right $
+  case matchOnceText r txt of
+    Just (pre, mt, post) | main:rest <- map fst (elems mt)
+      -> Just (pre, main, post, rest)
+    _ -> Nothing
