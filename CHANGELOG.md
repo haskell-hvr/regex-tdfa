@@ -1,5 +1,13 @@
 For the package version policy (PVP), see  http://pvp.haskell.org/faq .
 
+### 1.3.2.2
+
+_2023-08-02, Andreas Abel_
+
+- Fix return type in `memcpy` FFI signature ([#52](https://github.com/haskell-hvr/regex-tdfa/pull/52))
+- Refactor `regexec` to avoid partial functions `tail` and `(!0)`
+- Tested with GHC 7.4 - 9.8.1-alpha1
+
 ### 1.3.2.1
 
 _2023-05-19, Andreas Abel_
