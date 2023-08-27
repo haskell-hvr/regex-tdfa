@@ -1,26 +1,29 @@
 branches: master
 
-installed: +all -text -Cabal
+installed: +all
 
--- doctest-parallel requires base >= 4.10
-tests: >= 8.2
+constraint-set text-2.1
+  -- text-2.1 requires base >=4.10 (GHC 8.2)
+  ghc: >= 8.2
+  constraints: text ^>= 2.1
+  tests: True
+  run-tests: True
 
 constraint-set bytestring-0.12
   -- bytestring-0.12 requires base >=4.9 (GHC 8.0)
   ghc: >= 8.0
-  constraints: bytestring >= 0.12
+  constraints: bytestring ^>= 0.12
+  tests: True
+  run-tests: True
   --
   -- The following is silently ignored here:
   --
   -- raw-project
   --   allow-newer: bytestring
   --
-  -- Cannot build tests with newer bytestring because doctest-parallel relies on non-upgradeable ghc library
-  --
-  -- tests: True
-  -- run-tests: True
 
--- The following is meant to be for constraint-set bytestring-0.12 only,
+-- The following is meant to be for constraint-set bytestring-0.12 only
+-- (and for constraint-set text-2.1)
 -- but there is currently no way to enable `allow-newer: bytestring`
 -- just for the constraint set.
 --
@@ -30,3 +33,4 @@ constraint-set bytestring-0.12
 --
 raw-project
   allow-newer: bytestring
+  allow-newer: text
