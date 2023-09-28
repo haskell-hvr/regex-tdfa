@@ -2,13 +2,6 @@ branches: master
 
 installed: +all
 
-constraint-set text-2.1
-  -- text-2.1 requires base >=4.10 (GHC 8.2)
-  ghc: >= 8.2
-  constraints: text ^>= 2.1
-  tests: True
-  run-tests: True
-
 constraint-set bytestring-0.12
   -- bytestring-0.12 requires base >=4.9 (GHC 8.0)
   ghc: >= 8.0
@@ -22,8 +15,23 @@ constraint-set bytestring-0.12
   --   allow-newer: bytestring
   --
 
--- The following is meant to be for constraint-set bytestring-0.12 only
--- (and for constraint-set text-2.1)
+constraint-set containers-0.7
+  -- containers-0.7 requires base >=4.9 (GHC 8.0)
+  -- fails with GHCs 8.0 and 9.8.0
+  ghc: >= 8.2 && < 9.7
+  constraints: containers ^>= 0.7
+  tests: True
+  run-tests: True
+
+constraint-set text-2.1
+  -- text-2.1 requires base >=4.10 (GHC 8.2)
+  ghc: >= 8.2
+  constraints: text ^>= 2.1
+  tests: True
+  run-tests: True
+
+-- The following is meant to be for the constraint-set bytestring-0.12 only
+-- (and for the other constraint-sets)
 -- but there is currently no way to enable `allow-newer: bytestring`
 -- just for the constraint set.
 --
@@ -33,4 +41,5 @@ constraint-set bytestring-0.12
 --
 raw-project
   allow-newer: bytestring
+  allow-newer: containers
   allow-newer: text
