@@ -26,9 +26,9 @@ extra-source-files:
   test/cases/*.txt
 
 tested-with:
-  GHC == 9.10.0
+  GHC == 9.10.1
   GHC == 9.8.2
-  GHC == 9.6.4
+  GHC == 9.6.6
   GHC == 9.4.8
   GHC == 9.2.8
   GHC == 9.0.2
@@ -46,7 +46,7 @@ source-repository head
 source-repository this
   type:                git
   location:            https://github.com/haskell-hvr/regex-tdfa.git
-  tag:                 v1.3.2.2-r2
+  tag:                 v1.3.2.2-r3
 
 flag force-O2
   default: False
