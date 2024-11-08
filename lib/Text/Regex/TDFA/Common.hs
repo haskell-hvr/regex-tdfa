@@ -28,7 +28,7 @@ look key imap = IMap.findWithDefault (common_error "Text.Regex.DFA.Common" ("key
 
 common_error :: String -> String -> a
 common_error moduleName message =
-  error ("Explict error in module "++moduleName++" : "++message)
+  error ("Explicit error in module "++moduleName++" : "++message)
 
 on :: (t1 -> t1 -> t2) -> (t -> t1) -> t -> t -> t2
 f `on` g = (\x y -> (g x) `f` (g y))
@@ -109,7 +109,7 @@ data ExecOption = ExecOption {
     captureGroups :: Bool    -- ^ True by default.  Set to False to improve speed (and space).
   } deriving (Read,Show)
 
--- | Used by implementation to name certain 'Postion's during
+-- | Used by implementation to name certain 'Position's during
 -- matching. Identity of 'Position' tag to set during a transition.
 type Tag = Int
 

@@ -157,7 +157,7 @@ _2014-02-02, Chris Kuklewicz_
 
 ## 1.1.8
 
-Make ghc-7.0.2 on platorm 2011.2.0.0.0 happy
+Make ghc-7.0.2 on platform 2011.2.0.0.0 happy
 
 ## 1.1.7
 
