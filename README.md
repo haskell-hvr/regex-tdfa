@@ -194,7 +194,7 @@ By building on this thesis and adding a few more optimizations, regex-tdfa match
 
 Regardless of performance, nearly every single OS and Libra for POSIX regular expressions has bugs in sub-matches.  This was detailed on the [Regex POSIX Haskell wiki page](https://wiki.haskell.org/Regex_Posix), and can be demonstrated with the [regex-posix-unittest](http://hackage.haskell.org/package/regex-posix-unittest) suite of checks.  Test [regex-tdfa-unittest](http://hackage.haskell.org/package/regex-tdfa-unittest) should show regex-tdfa passing these same checks.  I owe my understanding of the correct behvior and many of these unit tests to Glenn Fowler at AT&T ("An Interpretation of the POSIX regex Standard").
 
-### Maintainance history
+### Maintenance history
 
 The original Darcs repository was at [code.haskell.org](http://code.haskell.org/regex-tdfa/).
 For a while a fork was maintained by Roman Cheplyaka as

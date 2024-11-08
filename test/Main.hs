@@ -178,7 +178,7 @@ main = do
       putStrLn $ "Explanation and discussion of these tests on the wiki at http://www.haskell.org/haskellwiki/Regex_Posix including comparing results from different operating systems"
       putStrLn $ "Questions about this package to the author at email <TextRegexLazy@personal.mightyreason.com>"
       putStrLn $ "The type of both the pattern and test is " ++ show (typeOf (undefined :: RType))
-      putStrLn $ "Without extactly two arguments:"
+      putStrLn $ "Without exactly two arguments:"
       putStrLn $ "    This program runs all test files listed in test/data-dir/test-manifest.txt"
       putStrLn $ "    Lines with negative number are expected to fail, others are expected to pass."
       putStrLn $ "With exactly two arguments:"

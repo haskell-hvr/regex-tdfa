@@ -264,14 +264,14 @@ bestTrans aTagOP (f:fs) | null fs = canonical f
                     -- this needs a leading Minimize tag inside at least the parent * operator
       Ignore -> GT -- XXX this is a guess in analogy with Maximize for the end bit of a group
       Orbit -> LT -- trace ("choose LT! Just "++show tag++" < Nothing") LT -- 2009 XXX : comment out next line and use the Orbit instead
---      Orbit -> err $ "bestTrans.choose : Very Unexpeted Orbit in Just Nothing: "++show (tag,post,aTagOP,f:fs)
+--      Orbit -> err $ "bestTrans.choose : Very Unexpected Orbit in Just Nothing: "++show (tag,post,aTagOP,f:fs)
   choose (Just (tag,post1)) (Just (_,post2)) =
     case aTagOP!tag of
       Maximize -> order
       Minimize -> flipOrder order
       Ignore -> EQ
       Orbit -> EQ
---      Orbit -> err $ "bestTrans.choose : Very Unexpeted Orbit in Just Just: "++show (tag,(post1,post2),aTagOP,f:fs)
+--      Orbit -> err $ "bestTrans.choose : Very Unexpected Orbit in Just Just: "++show (tag,(post1,post2),aTagOP,f:fs)
    where order = case (post1,post2) of
                    (SetPre,SetPre) -> EQ
                    (SetPost,SetPost) -> EQ

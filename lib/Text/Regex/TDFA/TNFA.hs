@@ -7,7 +7,7 @@
 -- (That will require re-organizing the continuation data a bit)
 
 -- | "Text.Regex.TDFA.TNFA" converts the CorePattern Q\/P data (and its
--- Pattern leafs) to a QNFA tagged non-deterministic finite automata.
+-- Pattern leaves) to a QNFA tagged non-deterministic finite automata.
 --
 -- This holds every possible way to follow one state by another, while
 -- in the DFA these will be reduced by picking a single best
