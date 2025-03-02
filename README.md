@@ -1,3 +1,8 @@
+[![Hackage version](https://img.shields.io/hackage/v/regex-tdfa.svg?label=Hackage&color=informational)](http://hackage.haskell.org/package/regex-tdfa)
+[![Stackage Nightly](http://stackage.org/package/regex-tdfa/badge/nightly)](http://stackage.org/nightly/package/regex-tdfa)
+[![Stackage LTS](http://stackage.org/package/regex-tdfa/badge/lts)](http://stackage.org/lts/package/regex-tdfa)
+[![Haskell-CI](https://github.com/haskell-hvr/regex-tdfa/actions/workflows/haskell-ci.yml/badge.svg?branch=master&event=push)](https://github.com/haskell-hvr/regex-tdfa/actions/workflows/haskell-ci.yml)
+[![License](https://img.shields.io/badge/License-BSD_3--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
 # regex-tdfa
 
 This is [`regex-tdfa`](http://hackage.haskell.org/package/regex-tdfa) which is a pure Haskell regular expression library (for POSIX extended regular expressions) originally written by Christopher Kuklewicz.

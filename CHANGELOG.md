@@ -1,4 +1,10 @@
-For the package version policy (PVP), see  http://pvp.haskell.org/faq .
+### 1.3.2.3
+
+_2025-03-02 Andreas Abel_
+
+- Drop support for GHC 7
+- Allow `containers < 1`
+- Tested with GHC 8.0 - 9.12.1
 
 ### 1.3.2.2
 
