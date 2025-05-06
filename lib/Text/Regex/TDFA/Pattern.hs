@@ -201,7 +201,7 @@ decodeCharacterClass (PatternSetCharacterClass s) =
     "digit"  -> ['0'..'9']
     "punct"  -> ['\33'..'\47']++['\58'..'\64']++['\91'..'\96']++['\123'..'\126']
     "alpha"  -> ['A'..'Z']++['a'..'z']
-    "graph"  -> ['\41'..'\126']
+    "graph"  -> ['\33'..'\126']
     "space"  -> "\t\n\v\f\r "
     "blank"  -> "\t "
     "lower"  -> ['a'..'z']
