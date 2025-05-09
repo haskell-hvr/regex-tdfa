@@ -1,3 +1,10 @@
+### 1.3.2.4
+
+_2025-05-09 Andreas Abel_
+
+- Fix definition of `[[:graph:]]` character class ([#66](https://github.com/haskell-hvr/regex-tdfa/issues/66))
+- Tested with GHC 8.0 - 9.12.2
+
 ### 1.3.2.3
 
 _2025-03-02 Andreas Abel_
