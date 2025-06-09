@@ -1,3 +1,7 @@
+### Unreleased
+
+- Bump `cabal-version` to 2.0 to support field `autogen-modules`.
+
 ### 1.3.2.4
 
 _2025-05-09 Andreas Abel_
