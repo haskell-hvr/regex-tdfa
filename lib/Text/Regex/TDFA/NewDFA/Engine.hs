@@ -44,6 +44,8 @@ import Data.Sequence(Seq,ViewL(..),viewl)
 import qualified Data.Sequence as Seq(null)
 import qualified Data.ByteString.Char8 as SBS(ByteString)
 import qualified Data.ByteString.Lazy.Char8 as LBS(ByteString)
+import qualified Data.Text as T
+import qualified Data.Text.Lazy as TL
 import Foreign.Ptr(Ptr)
 
 import Text.Regex.Base(MatchArray,MatchOffset,MatchLength)
@@ -82,6 +84,8 @@ set = unsafeWrite
 {-# SPECIALIZE execMatch :: Regex -> Position -> Char -> (Seq Char) -> [MatchArray] #-}
 {-# SPECIALIZE execMatch :: Regex -> Position -> Char -> SBS.ByteString -> [MatchArray] #-}
 {-# SPECIALIZE execMatch :: Regex -> Position -> Char -> LBS.ByteString -> [MatchArray] #-}
+{-# SPECIALIZE execMatch :: Regex -> Position -> Char -> T.Text -> [MatchArray] #-}
+{-# SPECIALIZE execMatch :: Regex -> Position -> Char -> TL.Text -> [MatchArray] #-}
 execMatch :: Uncons text => Regex -> Position -> Char -> text -> [MatchArray]
 execMatch r@(Regex { regex_dfa = DFA {d_id=didIn,d_dt=dtIn}
                    , regex_init = startState
