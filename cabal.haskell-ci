@@ -2,6 +2,8 @@ branches: master
 
 installed: +all
 
+error-incomplete-patterns: False
+
 -- constraint-set bytestring-0.12
 --   -- bytestring-0.12 requires base >=4.9 (GHC 8.0)
 --   ghc: >= 8.0
