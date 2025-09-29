@@ -18,7 +18,7 @@ import Data.IntMap.CharMap2(CharMap(..))
 import qualified Data.IntMap.CharMap2 as Map(empty)
 --import Data.IntSet(IntSet)
 import qualified Data.IntSet as ISet(empty,singleton,null)
-import Data.List(foldl')
+import qualified Data.List as List
 import qualified Data.Map (Map,empty,member,insert,elems)
 import Data.Sequence as S((|>),{-viewl,ViewL(..)-})
 
@@ -165,7 +165,7 @@ dfaMap = seen (Data.Map.empty) where
     if i `Data.Map.member` old
       then old
       else let new = Data.Map.insert i d old
-           in foldl' seen new (flattenDT dt)
+           in List.foldl' seen new (flattenDT dt)
 
 -- Get all trans_many states
 flattenDT :: DT -> [DFA]
@@ -223,7 +223,7 @@ bestTrans _ [] = err "bestTrans : There were no transition choose from!"
 bestTrans aTagOP (f:fs) | null fs = canonical f
                         | otherwise = answer -- if null toDisplay then answer else trace toDisplay answer
  where
-  answer = foldl' pick (canonical f) fs
+  answer = List.foldl' pick (canonical f) fs
   {- toDisplay | null fs = ""
                | otherwise = unlines $ "bestTrans" : show (answer) : "from among" : concatMap (\x -> [show x, show (toInstructions (snd x))]) (f:fs) -}
   canonical :: TagCommand -> (DoPa,Instructions)
