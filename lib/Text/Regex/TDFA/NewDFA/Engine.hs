@@ -16,7 +16,7 @@ import Data.Array.Base(unsafeRead,unsafeWrite,STUArray(..))
 -- #ifdef __GLASGOW_HASKELL__
 import GHC.Arr(STArray(..))
 import GHC.ST(ST(..))
-import GHC.Exts(MutableByteArray#,RealWorld,Int#,sizeofMutableByteArray#,State#)
+import GHC.Exts(MutableByteArray#,RealWorld,Int#,getSizeofMutableByteArray#,State#)
 import Unsafe.Coerce (unsafeCoerce)
 {-
 -- #else
@@ -730,8 +730,8 @@ copySTU _source@(STUArray _ _ _ msource) _destination@(STUArray _ _ _ mdest) =
 --  b2 <- getBounds s2
 --  when (b1/=b2) (error ("\n\nWTF copySTU: "++show (b1,b2)))
   ST $ \s1# ->
-    case sizeofMutableByteArray# msource        of { n# ->
-    case memcpyST mdest msource n# s1# of { (# s2#, _ #) ->
+    case getSizeofMutableByteArray# msource s1# of { (# s1'#, n# #) ->
+    case memcpyST mdest msource n# s1'# of { (# s2#, _ #) ->
     (# s2#, () #) }}
 {-
 -- #else /* !__GLASGOW_HASKELL__ */
