@@ -1,6 +1,11 @@
-### Unreleased
+### 1.3.2.5
 
-- Bump `cabal-version` to 2.0 to support field `autogen-modules`.
+_2025-09-29 Andreas Abel_
+
+- Bump `cabal-version` to 2.0 to support field `autogen-modules` ([#70](https://github.com/haskell-hvr/regex-tdfa/pull/70))
+- SPECIALIZE pragmas for faster `Text` matching ([#72](https://github.com/haskell-hvr/regex-tdfa/pull/72))
+- Address deprecation warning for `sizeofMutualByteArray#` ([#71](https://github.com/haskell-hvr/regex-tdfa/issues/71))
+- Tested with GHC 8.0 - 9.12.2
 
 ### 1.3.2.4
 

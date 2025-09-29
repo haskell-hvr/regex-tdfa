@@ -6,6 +6,8 @@
 /cabal.project.local
 /cabal.project.freeze
 /.ghc.environment.*
+/.stack-work/
+/stack*.yaml.lock
 
 TAGS
 .DS_Store
