@@ -36,7 +36,8 @@ import Data.Maybe(catMaybes)
 import Data.Monoid as Mon(Monoid(..))
 import qualified Data.IntSet as ISet(toAscList)
 import Data.Array.IArray((!))
-import Data.List(partition,sort,foldl',sortBy,groupBy)
+import Data.List(partition,sort,sortBy,groupBy)
+import qualified Data.List as List
 import Data.STRef(STRef,newSTRef,readSTRef,writeSTRef)
 import qualified Control.Monad.ST.Lazy as L(ST,runST,strictToLazyST)
 import qualified Control.Monad.ST.Strict as S(ST)
@@ -313,7 +314,7 @@ execMatch r@(Regex { regex_dfa = DFA {d_id=didIn,d_dt=dtIn}
           earlyWin <- readSTRef (mq_earliest winQ)
           if earlyWin < earlyStart
             then do
-              winners <- fmap (foldl' (\ rest ws -> ws : rest) []) $
+              winners <- fmap (List.foldl' (\ rest ws -> ws : rest) []) $
                            getMQ earlyStart winQ
               writeSTRef storeNext (next s2 s1 did' dt' (succ offset) prev' input')
               mapM (tagsToGroupsST aGroups) winners
@@ -397,7 +398,7 @@ execMatch r@(Regex { regex_dfa = DFA {d_id=didIn,d_dt=dtIn}
           putMQ (WScratch newerPos) winQ
 
         finalizeWinners = do
-          winners <- fmap (foldl' (\ rest mqa -> mqa_ws mqa : rest) []) $
+          winners <- fmap (List.foldl' (\ rest mqa -> mqa_ws mqa : rest) []) $
                        readSTRef (mq_list winQ) -- reverses the winner list
           resetMQ winQ
           writeSTRef storeNext (return [])

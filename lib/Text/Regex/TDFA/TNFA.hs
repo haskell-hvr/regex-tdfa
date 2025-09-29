@@ -40,7 +40,7 @@ import Control.Monad(when)
 import Control.Monad.State(State,runState,execState,get,put,modify)
 import Data.Array.IArray(Array,array)
 import Data.Char(toLower,toUpper,isAlpha,ord)
-import Data.List(foldl')
+import qualified Data.List as List
 import Data.IntMap (IntMap)
 import qualified Data.IntMap as IMap(toAscList,null,unionWith,singleton,fromList,fromDistinctAscList)
 import Data.IntMap.CharMap2(CharMap(..))
@@ -139,7 +139,7 @@ listTestInfo qt s = execState (helper qt) s
 -- processing Or.
 applyNullViews :: NullView -> QT -> QT
 applyNullViews [] win = win
-applyNullViews nvs win = foldl' (dominate win) qtlose (reverse $ cleanNullView nvs) where
+applyNullViews nvs win = List.foldl' (dominate win) qtlose (reverse $ cleanNullView nvs)
 
 -- This is used to prefer to view "win" through NullView.  Losing is
 -- replaced by the plain win.  This is employed by Star patterns to
@@ -147,7 +147,7 @@ applyNullViews nvs win = foldl' (dominate win) qtlose (reverse $ cleanNullView n
 -- skipping the NullView occurs if the match fails.
 preferNullViews :: NullView -> QT -> QT
 preferNullViews [] win = win
-preferNullViews nvs win = foldl' (dominate win) win (reverse $ cleanNullView nvs) where
+preferNullViews nvs win = List.foldl' (dominate win) win (reverse $ cleanNullView nvs)
 
 {-
 dominate is common to applyNullViews and preferNullViews above.
