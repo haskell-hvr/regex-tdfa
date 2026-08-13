@@ -1,3 +1,10 @@
+### 1.3.2.6
+
+_2026-08-13 Andreas Abel_
+
+- Address deprecation warning for (Data.IntSet.fold) ([#76](https://github.com/haskell-hvr/regex-tdfa/issues/76))
+- Tested with GHC 8.0 - 9.14.1
+
 ### 1.3.2.5
 
 _2025-09-29 Andreas Abel_

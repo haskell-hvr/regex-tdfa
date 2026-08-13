@@ -81,7 +81,7 @@ map f (EnumSet s) = EnumSet (S.map f' s)
   where f' b = fromEnum (f (toEnum b))
 
 fold :: (Enum e) => (e -> b -> b) -> b -> EnumSet e -> b
-fold f a (EnumSet s) = S.fold f' a s
+fold f a (EnumSet s) = S.foldr f' a s
   where f' b a1 = f (toEnum b) a1
 
 elems :: (Enum e) => EnumSet e -> [e]
