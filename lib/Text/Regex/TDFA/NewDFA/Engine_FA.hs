@@ -17,7 +17,7 @@ import Data.Array.Base(unsafeRead,unsafeWrite,STUArray(..))
 
 import GHC.Arr(STArray(..))
 import GHC.ST(ST(..))
-import GHC.Exts(MutableByteArray#,RealWorld,Int#,getSizeofMutableByteArray#,unsafeCoerce#,State#)
+import GHC.Exts(getSizeofMutableByteArray#,copyMutableByteArray#)
 
 import Prelude hiding ((!!))
 import Control.Monad(when,unless,forM,forM_,liftM2,foldM)
@@ -39,7 +39,6 @@ import Data.Sequence(Seq,ViewL(..),viewl)
 import qualified Data.Sequence as Seq(null)
 import qualified Data.ByteString.Char8 as SBS(ByteString)
 import qualified Data.ByteString.Lazy.Char8 as LBS(ByteString)
-import Foreign.Ptr(Ptr)
 
 import Text.Regex.Base(MatchArray,MatchOffset,MatchLength)
 import Text.Regex.TDFA.Common hiding (indent)
@@ -599,14 +598,7 @@ updateCopy ((_i1,instructions),oldPos,newOrbit) preTag s2 i2 = do
   doActions preTag newerPos (newPos instructions)
   set (m_orbit s2) i2 $! newOrbit
 
-{- USING memcpy TO COPY STUARRAY DATA -}
-
--- #ifdef __GLASGOW_HASKELL__
-foreign import ccall unsafe "memcpy"
-    memcpyIO :: MutableByteArray# RealWorld -> MutableByteArray# RealWorld -> Int# -> IO (Ptr a)
-
-memcpyST :: MutableByteArray# s -> MutableByteArray# s -> Int# -> State# s -> (# State# s, Ptr a #)
-memcpyST = unsafeCoerce# memcpyIO
+-- Copy STUArray storage through the byte-array primitive.
 
 {-
 Prelude Data.Array.Base> :i STUArray
@@ -623,7 +615,7 @@ copySTU _source@(STUArray _ _ _ msource) _destination@(STUArray _ _ _ mdest) =
 --  when (b1/=b2) (error ("\n\nWTF copySTU: "++show (b1,b2)))
   ST $ \s1# ->
     case getSizeofMutableByteArray# msource s1# of { (# s1'#, n# #) ->
-    case memcpyST mdest msource n# s1'# of { (# s2#, _ #) ->
+    case copyMutableByteArray# msource 0# mdest 0# n# s1'# of { s2# ->
     (# s2#, () #) }}
 {-
 -- #else /* !__GLASGOW_HASKELL__ */
