@@ -1,3 +1,10 @@
+### 1.3.2.7
+
+_2026-10-20 Andreas Abel_
+
+- Replace `memcpy` foreign imports with `copyMutableByteArray#` (David Himmelstrup [#78](https://github.com/haskell-hvr/regex-tdfa/issues/78))
+- Tested with GHC 8.0 - 10.0.1 alpha1
+
 ### 1.3.2.6
 
 _2026-08-13 Andreas Abel_
